@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 819049a361f354ea4b9cac723854e0ff
+timeCreated: 1502413797
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 67819
+  packageName: Bio IK
+  packageVersion: 2.0d
+  assetPath: Assets/BioIK/Setup/Objectives/Orientation.cs
+  uploadId: 199125

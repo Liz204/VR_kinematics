@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: b791f8ee6039c5846b642793dc7723cb
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 67819
+  packageName: Bio IK
+  packageVersion: 2.0d
+  assetPath: Assets/BioIK/Demo/Robot Kyle/Controller.controller
+  uploadId: 199125

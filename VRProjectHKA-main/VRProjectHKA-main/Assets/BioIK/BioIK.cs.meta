@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 37cfd7ed5d69f41aaa4d87968caf6a78
+timeCreated: 1502284509
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 67819
+  packageName: Bio IK
+  packageVersion: 2.0d
+  assetPath: Assets/BioIK/BioIK.cs
+  uploadId: 199125
