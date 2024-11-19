@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-// Add any necessary namespaces for VR
-using UnityEngine.XR; // For VR input (if needed)
+using UnityEngine.UI;
 
 public class MechanicalArmBuilder : MonoBehaviour
 {
@@ -11,6 +10,7 @@ public class MechanicalArmBuilder : MonoBehaviour
     public Color normalColor = Color.white;      // Color when joint is not selected
     public Color selectableColor = Color.green; // Color when joint is selectable
     public Color hoverColor = Color.yellow;     // Color when hovering over the joint
+    public bool isCreationMode = true;
 
     private GameObject currentJoint;        // The currently selected joint
     private GameObject newJoint;            // The new joint being created
@@ -18,22 +18,32 @@ public class MechanicalArmBuilder : MonoBehaviour
     private Renderer currentJointRenderer;  // Renderer for the current joint to change its color
     private bool isDragging = false;        // Is the user dragging a new joint?
     private bool isHovering = false;        // Is the pointer hovering over the joint?
+    public Button endArmCreationButton;
 
     public List<GameObject> joints = new List<GameObject>();        // List to store joints
     public List<GameObject> armSegments = new List<GameObject>();   // List to store arm segments
 
     void Start()
-    {
+    {   
         // Initialize with the first joint in the center of the screen
         currentJoint = Instantiate(jointPrefab, Vector3.zero, Quaternion.identity);
+        currentJoint.transform.SetParent(this.transform); // Nest the first joint inside the GameObject with this script
         currentJointRenderer = currentJoint.GetComponent<Renderer>();
         currentJointRenderer.material.color = selectableColor; // Set the initial selectable color
+        endArmCreationButton.onClick.AddListener(EndArmCreationMode);
 
         joints.Add(currentJoint);
     }
 
+    void EndArmCreationMode(){
+        isCreationMode = false;
+        currentJointRenderer = currentJoint.GetComponent<Renderer>();
+        currentJointRenderer.material.color = normalColor;
+        Destroy(endArmCreationButton.gameObject);
+    }
+
     void Update()
-    {
+    {   if(isCreationMode){
         if (isDragging && newJoint != null)
         {
             // Update the position of the new joint based on pointer position on the interaction plane
@@ -63,6 +73,7 @@ public class MechanicalArmBuilder : MonoBehaviour
             currentJointRenderer.material.color = selectableColor; // Set the color back to selectable
             newJoint = null;
         }
+    }
     }
 
     private void HandlePointerHover()
@@ -97,15 +108,19 @@ public class MechanicalArmBuilder : MonoBehaviour
         // Create a new joint and start dragging it
         Vector3 initialPosition = GetPointerPositionOnInteractionPlane();
         newJoint = Instantiate(jointPrefab, initialPosition, Quaternion.identity);
+        newJoint.transform.SetParent(currentJoint.transform); // Nest the new joint inside the current joint
         isDragging = true;
 
         // Create the arm segment between the current joint and new joint
         armSegment = Instantiate(armSegmentPrefab);
+        var segmentUpdater = armSegment.GetComponent<ArmSegmentUpdater>();
+
+        // Assign the start and end joints to the arm segment updater
+        segmentUpdater.startJoint = currentJoint.transform;
+        segmentUpdater.endJoint = newJoint.transform;
 
         joints.Add(newJoint);
         armSegments.Add(armSegment);
-
-        UpdateArmSegment();
     }
 
     private Vector3 GetPointerPositionOnInteractionPlane()
