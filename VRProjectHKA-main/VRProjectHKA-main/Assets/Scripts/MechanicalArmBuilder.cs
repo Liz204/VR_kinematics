@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using BioIK;
 
 public class MechanicalArmBuilder : MonoBehaviour
 {
@@ -19,12 +20,22 @@ public class MechanicalArmBuilder : MonoBehaviour
     private bool isDragging = false;        // Is the user dragging a new joint?
     private bool isHovering = false;        // Is the pointer hovering over the joint?
     public Button endArmCreationButton;
+    public GameObject target;
+
+    private BioIK.BioIK bioIK;
 
     public List<GameObject> joints = new List<GameObject>();        // List to store joints
     public List<GameObject> armSegments = new List<GameObject>();   // List to store arm segments
 
     void Start()
     {   
+
+        bioIK = GetComponent<BioIK.BioIK>();
+        if (bioIK == null)
+        {
+            Debug.LogError("BioIK component not found on the GameObject.");
+        }
+
         // Initialize with the first joint in the center of the screen
         currentJoint = Instantiate(jointPrefab, Vector3.zero, Quaternion.identity);
         currentJoint.transform.SetParent(this.transform); // Nest the first joint inside the GameObject with this script
@@ -40,10 +51,38 @@ public class MechanicalArmBuilder : MonoBehaviour
         currentJointRenderer = currentJoint.GetComponent<Renderer>();
         currentJointRenderer.material.color = normalColor;
         Destroy(endArmCreationButton.gameObject);
+
+        if(bioIK){
+
+            // activates bioIK for the whole arm
+            bioIK.Root.AddJoint();
+            var currentSegment = bioIK.Root;
+            var currentGameObject = this.transform;
+            while(currentSegment.Childs.Length>0){
+                currentSegment = currentSegment.Childs[0];
+                currentGameObject = currentGameObject.GetChild(0);
+                var properties = currentGameObject.GetComponent<JointProperties>();
+                properties.correspondingBioSegment = currentSegment;
+                if(currentSegment.Childs.Length>0){
+                    var currentJoint = currentSegment.AddJoint();
+                    currentJoint.X.SetEnabled(true);
+                    currentJoint.X.Constrained = false;
+
+                }
+            }
+            currentSegment.AddObjective(ObjectiveType.Position);
+            Position objective = (Position)currentSegment.Objectives[0];
+            objective.SetTargetTransform(target.transform);
+        }
     }
 
     void Update()
-    {   if(isCreationMode){
+    {   
+        if(Input.GetKeyDown(KeyCode.M)){
+            Debug.LogError(bioIK.Root);
+        }
+        
+        if(isCreationMode){
         if (isDragging && newJoint != null)
         {
             // Update the position of the new joint based on pointer position on the interaction plane
