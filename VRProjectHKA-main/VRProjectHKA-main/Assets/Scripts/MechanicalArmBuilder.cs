@@ -58,6 +58,7 @@ public class MechanicalArmBuilder : MonoBehaviour
             bioIK.Root.AddJoint();
             var currentSegment = bioIK.Root;
             var currentGameObject = this.transform;
+            Transform lastGameObject = null;
             while(currentSegment.Childs.Length>0){
                 currentSegment = currentSegment.Childs[0];
                 currentGameObject = currentGameObject.GetChild(0);
@@ -67,8 +68,12 @@ public class MechanicalArmBuilder : MonoBehaviour
                     var currentJoint = currentSegment.AddJoint();
                     currentJoint.X.SetEnabled(true);
                     currentJoint.X.Constrained = false;
-
                 }
+
+                if(lastGameObject != null){
+                    properties.setPreviousJoint(lastGameObject);
+                }
+                lastGameObject = currentGameObject;
             }
             currentSegment.AddObjective(ObjectiveType.Position);
             Position objective = (Position)currentSegment.Objectives[0];

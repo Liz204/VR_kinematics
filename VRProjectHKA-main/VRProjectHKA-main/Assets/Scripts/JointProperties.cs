@@ -31,9 +31,20 @@ public class JointProperties : MonoBehaviour
     public Color normalColor = Color.white; // Default color
     private bool isHovering = false;
 
+    public Transform previousJoint;
+    public Transform nextJoint;
+
     void Start()
     {
         sphereRenderer = GetComponent<Renderer>();
+        
+    }
+
+
+    public void setPreviousJoint(Transform joint){
+        previousJoint = joint;
+        previousJoint.GetComponent<JointProperties>().nextJoint = this.transform;
+
     }
 
     void Update()
