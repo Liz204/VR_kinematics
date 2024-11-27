@@ -195,8 +195,12 @@ public class JointProperties : MonoBehaviour
     private void OnTypeChanged(int value)
     {
         jointType = (JointType)value;
+        if (correspondingBioSegment != null)
+        {
+            correspondingBioSegment.Joint.JointType = (BioIK.JointType)value;
         Debug.Log($"Joint type changed to: {jointType}");
         // Additional logic if needed
+        }
     }
 
     private void OnEnableXChanged(bool value)
