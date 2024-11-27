@@ -20,9 +20,11 @@ public class JointProperties : MonoBehaviour
 
     [Header("Restrictions")]
     public bool enabledX = false;
+    public bool constrainedX = false;
     public float lowerLimitX = 0f;
     public float upperLimitX = 0f;
     public bool enabledY = false;
+    public bool constrainedY = false;
     public float lowerLimitY = 0f;
     public float upperLimitY = 0f;
 
@@ -139,6 +141,8 @@ public class JointProperties : MonoBehaviour
         TMP_Dropdown typeDropdown = jointSettingsPanelInstance.transform.Find("Type").GetComponent<TMP_Dropdown>();
         Toggle enableXToggle = jointSettingsPanelInstance.transform.Find("EnableX").GetComponent<Toggle>();
         Toggle enableYToggle = jointSettingsPanelInstance.transform.Find("EnableY").GetComponent<Toggle>();
+        Toggle constrainedXToggle = jointSettingsPanelInstance.transform.Find("ConstrainedX").GetComponent<Toggle>();
+        Toggle constrainedYToggle = jointSettingsPanelInstance.transform.Find("ConstrainedY").GetComponent<Toggle>();
         Slider lowerLimitXSlider = jointSettingsPanelInstance.transform.Find("LowerLimitX").GetComponent<Slider>();
         Slider upperLimitXSlider = jointSettingsPanelInstance.transform.Find("UpperLimitX").GetComponent<Slider>();
         Slider lowerLimitYSlider = jointSettingsPanelInstance.transform.Find("LowerLimitY").GetComponent<Slider>();
@@ -148,6 +152,8 @@ public class JointProperties : MonoBehaviour
         typeDropdown.onValueChanged.RemoveAllListeners();
         enableXToggle.onValueChanged.RemoveAllListeners();
         enableYToggle.onValueChanged.RemoveAllListeners();
+        constrainedXToggle.onValueChanged.RemoveAllListeners();
+        constrainedYToggle.onValueChanged.RemoveAllListeners();
         lowerLimitXSlider.onValueChanged.RemoveAllListeners();
         upperLimitXSlider.onValueChanged.RemoveAllListeners();
         lowerLimitYSlider.onValueChanged.RemoveAllListeners();
@@ -157,6 +163,8 @@ public class JointProperties : MonoBehaviour
         typeDropdown.value = (int)jointType;
         enableXToggle.isOn = enabledX;
         enableYToggle.isOn = enabledY;
+        constrainedXToggle.isOn = constrainedX;
+        constrainedYToggle.isOn = constrainedY;
         lowerLimitXSlider.value = lowerLimitX;
         upperLimitXSlider.value = upperLimitX;
         lowerLimitYSlider.value = lowerLimitY;
@@ -166,6 +174,8 @@ public class JointProperties : MonoBehaviour
         typeDropdown.onValueChanged.AddListener(OnTypeChanged);
         enableXToggle.onValueChanged.AddListener(OnEnableXChanged);
         enableYToggle.onValueChanged.AddListener(OnEnableYChanged);
+        constrainedXToggle.onValueChanged.AddListener(onConstrainedXChanged);
+        constrainedYToggle.onValueChanged.AddListener(onConstrainedYChanged);
         lowerLimitXSlider.onValueChanged.AddListener(OnLowerLimitXChanged);
         upperLimitXSlider.onValueChanged.AddListener(OnUpperLimitXChanged);
         lowerLimitYSlider.onValueChanged.AddListener(OnLowerLimitYChanged);
@@ -193,14 +203,44 @@ public class JointProperties : MonoBehaviour
     {
         enabledX = value;
         Debug.Log($"Enable X changed to: {enabledX}");
-        // Additional logic if needed
+        if (correspondingBioSegment != null)
+        {
+            correspondingBioSegment.Joint.X.Enabled = value;
+            Debug.Log($"BioSegment.X.Enabled updated to: {value}");
+        }
     }
 
     private void OnEnableYChanged(bool value)
     {
         enabledY = value;
         Debug.Log($"Enable Y changed to: {enabledY}");
-        // Additional logic if needed
+        if (correspondingBioSegment != null)
+        {
+            correspondingBioSegment.Joint.Y.Enabled = value;
+            Debug.Log($"BioSegment.Y.Enabled updated to: {value}");
+        }
+    }
+
+    private void onConstrainedXChanged(bool value)
+    {
+        constrainedX = value;
+        Debug.Log($"Constrained X changed to: {constrainedX}");
+        if (correspondingBioSegment != null)
+        {
+            correspondingBioSegment.Joint.X.Constrained = value;
+            Debug.Log($"BioSegment.X.Constrained updated to: {value}");
+        }
+    }
+
+    private void onConstrainedYChanged(bool value)
+    {
+        constrainedY = value;
+        Debug.Log($"Constrained Y changed to: {constrainedY}");
+        if (correspondingBioSegment != null)
+        {
+            correspondingBioSegment.Joint.Y.Constrained = value;
+            Debug.Log($"BioSegment.Y.Constrained updated to: {value}");
+        }
     }
 
     private void OnLowerLimitXChanged(float value)
@@ -209,11 +249,15 @@ public class JointProperties : MonoBehaviour
         if (lowerLimitX > upperLimitX)
         {
             lowerLimitX = upperLimitX;
-            // Update slider value to reflect the change
             Slider slider = jointSettingsPanelInstance.transform.Find("LowerLimitX").GetComponent<Slider>();
             slider.value = lowerLimitX;
         }
         Debug.Log($"Lower Limit X changed to: {lowerLimitX}");
+        if (correspondingBioSegment != null)
+        {
+            correspondingBioSegment.Joint.X.LowerLimit = lowerLimitX;
+            Debug.Log($"BioSegment.X.LowerLimit updated to: {lowerLimitX}");
+        }
     }
 
     private void OnUpperLimitXChanged(float value)
@@ -222,11 +266,15 @@ public class JointProperties : MonoBehaviour
         if (upperLimitX < lowerLimitX)
         {
             upperLimitX = lowerLimitX;
-            // Update slider value to reflect the change
             Slider slider = jointSettingsPanelInstance.transform.Find("UpperLimitX").GetComponent<Slider>();
             slider.value = upperLimitX;
         }
         Debug.Log($"Upper Limit X changed to: {upperLimitX}");
+        if (correspondingBioSegment != null)
+        {
+            correspondingBioSegment.Joint.X.UpperLimit = upperLimitX;
+            Debug.Log($"BioSegment.X.UpperLimit updated to: {upperLimitX}");
+        }
     }
 
     private void OnLowerLimitYChanged(float value)
@@ -239,6 +287,11 @@ public class JointProperties : MonoBehaviour
             slider.value = lowerLimitY;
         }
         Debug.Log($"Lower Limit Y changed to: {lowerLimitY}");
+        if (correspondingBioSegment != null)
+        {
+            correspondingBioSegment.Joint.Y.LowerLimit = lowerLimitY;
+            Debug.Log($"BioSegment.Y.LowerLimit updated to: {lowerLimitY}");
+        }
     }
 
     private void OnUpperLimitYChanged(float value)
@@ -251,6 +304,11 @@ public class JointProperties : MonoBehaviour
             slider.value = upperLimitY;
         }
         Debug.Log($"Upper Limit Y changed to: {upperLimitY}");
+        if (correspondingBioSegment != null)
+        {
+            correspondingBioSegment.Joint.Y.UpperLimit = upperLimitY;
+            Debug.Log($"BioSegment.Y.UpperLimit updated to: {upperLimitY}");
+        }
     }
 
     private void HandlePointerHover()

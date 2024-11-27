@@ -8,6 +8,7 @@ public class MechanicalArmBuilder : MonoBehaviour
     public GameObject jointPrefab;          // Prefab for the joint (e.g., a sphere)
     public GameObject armSegmentPrefab;     // Prefab for the arm segment (e.g., a cylinder)
     public float interactionPlaneDistance = 0.1f; // Distance of the interaction plane from the camera
+    private float zCoord; 
     public Color normalColor = Color.white;      // Color when joint is not selected
     public Color selectableColor = Color.green; // Color when joint is selectable
     public Color hoverColor = Color.yellow;     // Color when hovering over the joint
@@ -68,6 +69,8 @@ public class MechanicalArmBuilder : MonoBehaviour
                     var currentJoint = currentSegment.AddJoint();
                     currentJoint.X.SetEnabled(true);
                     currentJoint.X.Constrained = false;
+                    currentJoint.Y.SetEnabled(true);
+                    currentJoint.Y.Constrained = false;
                 }
 
                 if(lastGameObject != null){
@@ -83,41 +86,56 @@ public class MechanicalArmBuilder : MonoBehaviour
 
     void Update()
     {   
-        if(Input.GetKeyDown(KeyCode.M)){
-            Debug.LogError(bioIK.Root);
-        }
-        
-        if(isCreationMode){
-        if (isDragging && newJoint != null)
+        if (isCreationMode)
         {
-            // Update the position of the new joint based on pointer position on the interaction plane
-            Vector3 targetPosition = GetPointerPositionOnInteractionPlane();
-            newJoint.transform.position = targetPosition;
+            if (isDragging && newJoint != null)
+            {
+                // Update the position of the new joint based on pointer position at the depth of the current joint
+                Vector3 targetPosition = GetPointerPositionWithRay();
+                newJoint.transform.position = targetPosition;
 
-            // Update arm segment to connect currentJoint and newJoint
-            UpdateArmSegment();
-        }
+                // Update arm segment to connect currentJoint and newJoint
+                UpdateArmSegment();
+            }
 
-        // Check for pointer hover to change color
-        HandlePointerHover();
+            // Check for pointer hover to change color
+            HandlePointerHover();
 
-        // Check for input to select or create a joint
-        if (IsSelectButtonDown() && !isDragging && isHovering)
-        {
-            CreateNewJoint();
-        }
+            // Check for input to select or create a joint
+            if (IsSelectButtonDown() && !isDragging && isHovering)
+            {
+                CreateNewJoint();
+            }
 
-        // Release the new joint if the select button is released
-        if (IsSelectButtonUp() && isDragging)
-        {
-            isDragging = false;
-            currentJointRenderer.material.color = normalColor; // Reset the color of the current joint
-            currentJoint = newJoint;  // Make the new joint the current joint for the next segment
-            currentJointRenderer = currentJoint.GetComponent<Renderer>();
-            currentJointRenderer.material.color = selectableColor; // Set the color back to selectable
-            newJoint = null;
+            // Release the new joint if the select button is released
+            if (IsSelectButtonUp() && isDragging)
+            {
+                isDragging = false;
+                currentJointRenderer.material.color = normalColor; // Reset the color of the current joint
+                currentJoint = newJoint;  // Make the new joint the current joint for the next segment
+                currentJointRenderer = currentJoint.GetComponent<Renderer>();
+                currentJointRenderer.material.color = selectableColor; // Set the color back to selectable
+                newJoint = null;
+            }
         }
     }
+    
+
+    private Vector3 GetPointerPositionWithRay()
+    {
+        // Generate a ray from the camera or pointer
+        Ray ray = GetPointerRay();
+
+        // Plane at the depth of the current joint
+        Plane interactionPlane = new Plane(Camera.main.transform.forward, currentJoint.transform.position);
+
+        // Find the intersection point between the ray and the plane
+        if (interactionPlane.Raycast(ray, out float distance))
+        {
+            return ray.GetPoint(distance); // Return the point where the ray intersects the plane
+        }
+
+        return Vector3.zero; // Fallback in case the ray doesn't hit the plane
     }
 
     private void HandlePointerHover()

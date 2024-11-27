@@ -130,7 +130,7 @@ MonoBehaviour:
   upperLimitY: 1
   isFixed: 0
   correspondingBioSegment: {fileID: 0}
-  jointSettingsPanelPrefab: {fileID: 5299183471628276032, guid: 67bf6e50c332844498ca9a97162ab3f2, type: 3}
+  jointSettingsPanelPrefab: {fileID: 8270612279339497292, guid: 67bf6e50c332844498ca9a97162ab3f2, type: 3}
   hoverColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   previousJoint: {fileID: 0}

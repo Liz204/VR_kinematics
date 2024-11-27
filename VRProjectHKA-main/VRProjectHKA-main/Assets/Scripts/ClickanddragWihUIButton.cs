@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-//using UnityEngine.XR; // For VR input (if needed)
 
 public class ClickAndDragWithUI : MonoBehaviour
 {
@@ -12,52 +11,96 @@ public class ClickAndDragWithUI : MonoBehaviour
     private Vector3 offset;
     private float zCoord;
 
+    // Reference to the object's renderer for visual feedback
+    private Renderer objectRenderer;
+
     void Start()
     {
-        mainCamera = Camera.main; // Obtiene la cámara principal
+        mainCamera = Camera.main;
         endArmCreationButton.onClick.AddListener(StartDraggableMode);
-        var rend = GetComponent<Renderer>();
-        rend.enabled = false;
+
+        objectRenderer = GetComponent<Renderer>();
+        objectRenderer.enabled = false;
     }
 
-    void StartDraggableMode(){
-        var rend = GetComponent<Renderer>();
-        rend.enabled = true;
+    void StartDraggableMode()
+    {
+        objectRenderer.enabled = true;
         isDraggable = true;
-    }
-    void OnMouseDown()
-    {
-        // Guarda la distancia Z del objeto desde la cámara
-        zCoord = mainCamera.WorldToScreenPoint(transform.position).z;
-
-        // Calcula el offset entre el clic y la posición del objeto
-        offset = transform.position - GetMouseWorldPosition();
-        
-        isDragging = true;
-    }
-
-    void OnMouseUp()
-    {
-        isDragging = false; // Suelta el objeto
     }
 
     void Update()
     {
-        if (isDragging && isDraggable)
+        if (isDraggable)
         {
-            // Mueve el objeto a la posición del ratón
-            transform.position = GetMouseWorldPosition() + offset;
+            HandleInput();
+        }
+
+        if (isDragging)
+        {
+            // Move the object to the pointer position
+            Vector3 pointerPosition = GetPointerPosition();
+            transform.position = pointerPosition + offset;
         }
     }
 
-    // Calcula la posición del ratón en coordenadas del mundo
-    private Vector3 GetMouseWorldPosition()
+    private void HandleInput()
     {
-        Vector3 mousePoint = Input.mousePosition;
+        // When the select button is pressed
+        if (IsSelectButtonDown())
+        {
+            Ray ray = GetPointerRay();
 
-        // Agrega la profundidad Z
-        mousePoint.z = zCoord;
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                if (hit.collider.gameObject == gameObject)
+                {
+                    // Begin dragging
+                    isDragging = true;
 
-        return mainCamera.ScreenToWorldPoint(mousePoint);
+                    // Save the offset between the object and the pointer position
+                    zCoord = mainCamera.WorldToScreenPoint(transform.position).z;
+                    offset = transform.position - GetPointerWorldPosition();
+                }
+            }
+        }
+
+        // When the select button is released
+        if (IsSelectButtonUp())
+        {
+            isDragging = false;
+        }
+    }
+
+    private Ray GetPointerRay()
+    {
+        // TODO: Replace with VR controller's ray when implementing VR
+        return mainCamera.ScreenPointToRay(Input.mousePosition);
+    }
+
+    private bool IsSelectButtonDown()
+    {
+        // TODO: Replace with VR controller's select button down check
+        return Input.GetMouseButtonDown(0);
+    }
+
+    private bool IsSelectButtonUp()
+    {
+        // TODO: Replace with VR controller's select button up check
+        return Input.GetMouseButtonUp(0);
+    }
+
+    private Vector3 GetPointerPosition()
+    {
+        Vector3 pointerScreenPosition = Input.mousePosition;
+        pointerScreenPosition.z = zCoord;
+        return mainCamera.ScreenToWorldPoint(pointerScreenPosition);
+    }
+
+    private Vector3 GetPointerWorldPosition()
+    {
+        Vector3 pointerScreenPosition = Input.mousePosition;
+        pointerScreenPosition.z = zCoord;
+        return mainCamera.ScreenToWorldPoint(pointerScreenPosition);
     }
 }
