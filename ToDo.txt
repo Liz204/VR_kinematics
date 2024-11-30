@@ -1,0 +1,3 @@
+3.2: 
+	Se ve el Cubo, pero no el canvas ni el texto
+	- Hacer que se vea el canvas
