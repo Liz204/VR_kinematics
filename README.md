@@ -15,7 +15,15 @@ Pablo Torres
 - For the APK configuration: https://youtu.be/RkgtWU5WqUY
 
 # Guides
-## Install an Apk in VR
+## Install an Apk
+1. Download the .apk
+2. Enter to "Mobile Vr Station"
+3. "Local Files / All Folders / Android / data / Scope storage Actions / Step 1: Request Access"
+4. "Quest 2 / Download"
+5. Clic the .apk extpand icon
+6. Continue / Update or Install / Open
+## Open an installed Apk
+7. Go where are all the apps and on the left size clic "Unknown Sources"
 
 ## Steps For a New Vr Proyect
 1. Import Oculus Integration (My Assets)
