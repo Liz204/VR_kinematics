@@ -1,7 +1,9 @@
 Pablo Torres 
 
 # To Do
-- **VR Text 3.4**: Hand controllers input are not being recognized.
+**VR Text 3.4**: 
+- Hand controllers input are not being recognized.
+- The stats Canva still not being shown
 
 # General
 Version Used: 
