@@ -1,4 +1,0 @@
-1. Import Oculus Integration (My Assets)
-2. Import VR Managment (General Settings)
-3. Switch Platform
-4. Transform the camera (XR / Convert Main camera into XRRig)
