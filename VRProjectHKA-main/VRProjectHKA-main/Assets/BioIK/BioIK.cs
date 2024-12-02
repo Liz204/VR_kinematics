@@ -241,6 +241,7 @@ namespace BioIK {
 			Root = FindSegment(transform);
 
 			if(evolution && Application.isPlaying) {
+				Debug.Log("Refreshing Evolution");
 				DeInitialise();
 				Initialise();
 				Solution = new double[Evolution.GetModel().GetDoF()];

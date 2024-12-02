@@ -198,8 +198,8 @@ public class JointProperties : MonoBehaviour
         if (correspondingBioSegment != null)
         {
             correspondingBioSegment.Joint.JointType = (BioIK.JointType)value;
-        Debug.Log($"Joint type changed to: {jointType}");
-        // Additional logic if needed
+            correspondingBioSegment.Character.Refresh(true); // Re-initialize Evolution
+            Debug.Log($"Joint type changed to: {jointType}");
         }
     }
 
@@ -209,7 +209,8 @@ public class JointProperties : MonoBehaviour
         Debug.Log($"Enable X changed to: {enabledX}");
         if (correspondingBioSegment != null)
         {
-            correspondingBioSegment.Joint.X.Enabled = value;
+            correspondingBioSegment.Joint.X.SetEnabled(value);
+            correspondingBioSegment.Character.Refresh(true); // Re-initialize Evolution
             Debug.Log($"BioSegment.X.Enabled updated to: {value}");
         }
     }
@@ -220,7 +221,8 @@ public class JointProperties : MonoBehaviour
         Debug.Log($"Enable Y changed to: {enabledY}");
         if (correspondingBioSegment != null)
         {
-            correspondingBioSegment.Joint.Y.Enabled = value;
+            correspondingBioSegment.Joint.Y.SetEnabled(value);
+            correspondingBioSegment.Character.Refresh(true); // Re-initialize Evolution
             Debug.Log($"BioSegment.Y.Enabled updated to: {value}");
         }
     }
@@ -232,6 +234,7 @@ public class JointProperties : MonoBehaviour
         if (correspondingBioSegment != null)
         {
             correspondingBioSegment.Joint.X.Constrained = value;
+            correspondingBioSegment.Character.Refresh(true); // Re-initialize Evolution
             Debug.Log($"BioSegment.X.Constrained updated to: {value}");
         }
     }
@@ -243,6 +246,7 @@ public class JointProperties : MonoBehaviour
         if (correspondingBioSegment != null)
         {
             correspondingBioSegment.Joint.Y.Constrained = value;
+            correspondingBioSegment.Character.Refresh(true); // Re-initialize Evolution
             Debug.Log($"BioSegment.Y.Constrained updated to: {value}");
         }
     }
@@ -259,7 +263,8 @@ public class JointProperties : MonoBehaviour
         Debug.Log($"Lower Limit X changed to: {lowerLimitX}");
         if (correspondingBioSegment != null)
         {
-            correspondingBioSegment.Joint.X.LowerLimit = lowerLimitX;
+            correspondingBioSegment.Joint.X.SetLowerLimit(lowerLimitX);
+            correspondingBioSegment.Character.Refresh(true); // Re-initialize Evolution
             Debug.Log($"BioSegment.X.LowerLimit updated to: {lowerLimitX}");
         }
     }
@@ -276,7 +281,8 @@ public class JointProperties : MonoBehaviour
         Debug.Log($"Upper Limit X changed to: {upperLimitX}");
         if (correspondingBioSegment != null)
         {
-            correspondingBioSegment.Joint.X.UpperLimit = upperLimitX;
+            correspondingBioSegment.Joint.X.SetUpperLimit(upperLimitX);
+            correspondingBioSegment.Character.Refresh(true); // Re-initialize Evolution
             Debug.Log($"BioSegment.X.UpperLimit updated to: {upperLimitX}");
         }
     }
@@ -293,7 +299,8 @@ public class JointProperties : MonoBehaviour
         Debug.Log($"Lower Limit Y changed to: {lowerLimitY}");
         if (correspondingBioSegment != null)
         {
-            correspondingBioSegment.Joint.Y.LowerLimit = lowerLimitY;
+            correspondingBioSegment.Joint.Y.SetLowerLimit(lowerLimitY);
+            correspondingBioSegment.Character.Refresh(true); // Re-initialize Evolution
             Debug.Log($"BioSegment.Y.LowerLimit updated to: {lowerLimitY}");
         }
     }
@@ -310,7 +317,8 @@ public class JointProperties : MonoBehaviour
         Debug.Log($"Upper Limit Y changed to: {upperLimitY}");
         if (correspondingBioSegment != null)
         {
-            correspondingBioSegment.Joint.Y.UpperLimit = upperLimitY;
+            correspondingBioSegment.Joint.Y.SetUpperLimit(upperLimitY);
+            correspondingBioSegment.Character.Refresh(true); // Re-initialize Evolution
             Debug.Log($"BioSegment.Y.UpperLimit updated to: {upperLimitY}");
         }
     }
