@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: aaddeedceff8846e996faabd870e2a00
+timeCreated: 1471630807
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 67819
+  packageName: Bio IK
+  packageVersion: 2.0d
+  assetPath: Assets/BioIK/Demo/Materials/Box.mat
+  uploadId: 199125

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4994c8104f91d48449ff7ec1b9cd1cc4
+timeCreated: 1480727627
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 67819
+  packageName: Bio IK
+  packageVersion: 2.0d
+  assetPath: Assets/BioIK/Demo/Meshes/Cone.asset
+  uploadId: 199125

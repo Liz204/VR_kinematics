@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 351b018012d2d495fb861167ddd81104
+timeCreated: 1503240813
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 67819
+  packageName: Bio IK
+  packageVersion: 2.0d
+  assetPath: Assets/BioIK/Demo/Materials/Green.mat
+  uploadId: 199125
