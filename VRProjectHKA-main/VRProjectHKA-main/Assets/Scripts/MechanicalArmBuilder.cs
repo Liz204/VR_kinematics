@@ -215,14 +215,14 @@ public class MechanicalArmBuilder : MonoBehaviour
     {
         // TODO VR: Replace this with VR controller's select button down check
         //return Input.GetMouseButtonDown(0);
-        return OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger);
+        return OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger);
     }
 
     private bool IsSelectButtonUp()
     {
         // TODO VR: Replace this with VR controller's select button up check
         //return Input.GetMouseButtonUp(0);
-        return OVRInput.GetUp(OVRInput.Button.PrimaryHandTrigger);
+        return OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger);
         
     }
 
