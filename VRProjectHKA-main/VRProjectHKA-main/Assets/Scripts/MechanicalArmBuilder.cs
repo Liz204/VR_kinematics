@@ -2,9 +2,13 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using BioIK;
+using Oculus.Interaction;
 
 public class MechanicalArmBuilder : MonoBehaviour
 {
+    // Referencia al RayInteractor
+    [SerializeField]
+    public RayInteractor rayInteractor;
     public GameObject jointPrefab;          // Prefab for the joint (e.g., a sphere)
     public GameObject armSegmentPrefab;     // Prefab for the arm segment (e.g., a cylinder)
     public float interactionPlaneDistance = 0.1f; // Distance of the interaction plane from the camera
@@ -30,6 +34,10 @@ public class MechanicalArmBuilder : MonoBehaviour
 
     void Start()
     {   
+        if (rayInteractor == null)
+        {
+            Debug.LogError("No se ha asignado un RayInteractor al script.");
+        }
 
         bioIK = GetComponent<BioIK.BioIK>();
         if (bioIK == null)
@@ -141,7 +149,9 @@ public class MechanicalArmBuilder : MonoBehaviour
     private void HandlePointerHover()
     {
         // Raycast to check if the pointer is over the current joint
-        Ray ray = GetPointerRay();
+        if (rayInteractor == null) return;
+
+        Ray ray = rayInteractor.Ray;
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
@@ -191,13 +201,14 @@ public class MechanicalArmBuilder : MonoBehaviour
         Plane interactionPlane = new Plane(Camera.main.transform.forward, Camera.main.transform.position + Camera.main.transform.forward * interactionPlaneDistance);
 
         // Get the pointer ray
-        Ray ray = GetPointerRay();
+        Ray ray = rayInteractor.Ray; // Obtén el rayo desde el RayInteractor
 
         // Find where the ray intersects with the interaction plane
-        if (interactionPlane.Raycast(ray, out float distance))
-        {
-            return ray.GetPoint(distance);
-        }
+        if (Physics.Raycast(ray, out RaycastHit hit))
+    {
+        // Si el rayo golpea un objeto, devuelve su posición
+        return hit.point;
+    }
 
         return Vector3.zero; // Fallback in case of an error
     }
@@ -206,19 +217,31 @@ public class MechanicalArmBuilder : MonoBehaviour
     {
         // TODO VR: Replace this with VR controller's pointing direction when in VR mode
         // For now, use mouse position ray
-        return Camera.main.ScreenPointToRay(Input.mousePosition);
+        //return Camera.main.ScreenPointToRay(Input.mousePosition);
+        // Obtén la posición y dirección del rayo desde el controlador derecho
+        // Crear un rayo basado en la posición y dirección del controlador
+        return new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+        // Obtener la posición y rotación del controlador derecho
+        //Vector3 controllerPosition = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+        //Quaternion controllerRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
+
+        // Crear un rayo basado en la posición y dirección del controlador
+        //return new Ray(controllerPosition, controllerRotation * Vector3.forward);
     }
 
     private bool IsSelectButtonDown()
     {
         // TODO VR: Replace this with VR controller's select button down check
-        return Input.GetMouseButtonDown(0);
+        //return Input.GetMouseButtonDown(0);
+        return OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger);
     }
 
     private bool IsSelectButtonUp()
     {
         // TODO VR: Replace this with VR controller's select button up check
-        return Input.GetMouseButtonUp(0);
+        //return Input.GetMouseButtonUp(0);
+        return OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger);
+        
     }
 
     private void UpdateArmSegment()
