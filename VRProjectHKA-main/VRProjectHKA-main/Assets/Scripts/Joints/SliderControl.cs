@@ -12,16 +12,22 @@ public class SliderControl : MonoBehaviour
     [Range(0f, 1f)]
     public float sliderValue = 0.5f;   // 0 at the start, 1 at the end of the rail
 
+    [Header("Rotation Settings")]
+    public float rotationFactor = 45f; // Degrees per unit of "other" movement (now along z-axis)
+
     private float railLength;          // Length of the rail in world space
     private float railStart;           // World-space start X-position of the slider range
     private float railEnd;             // World-space end X-position of the slider range
 
     // Interaction states
     private bool isDragging = false;
-    private float dragOffset = 0f;
+    private bool useVR = false; 
+    private bool isHovering = false; 
 
-    private bool useVR = false; // Will be true if VR input (RayInteractor) is available
-    private bool isHovering = false; // Is the pointer hovering over the slider?
+    // Dragging references
+    private Vector3 initialDragPoint;  // The world point on the plane where dragging started
+    private float initialSliderValue;
+    private float initialRotationX; 
 
     void Start()
     {
@@ -33,12 +39,12 @@ public class SliderControl : MonoBehaviour
         // Determine if we are using VR based on RayInteractor availability
         useVR = (rayInteractor != null);
 
-        // Assuming the cylinder is oriented along the X-axis and is centered at rail.position
+        // Rail assumed along X-axis
         railLength = rail.localScale.y;
-        railStart = rail.position.x - (railLength * 0.82f);
-        railEnd = rail.position.x + (railLength * 0.82f);
+        railStart = rail.position.x - (railLength * 0.5f);
+        railEnd = rail.position.x + (railLength * 0.5f);
 
-        // Initialize the slider position based on sliderValue
+        // Initialize the slider position
         SetSliderValue(sliderValue);
     }
 
@@ -48,7 +54,7 @@ public class SliderControl : MonoBehaviour
 
         if (!isDragging)
         {
-            // If not currently dragging, check if the user tries to start dragging
+            // Start dragging if select pressed and hovering
             if (IsSelectButtonDown() && isHovering)
             {
                 StartDragging();
@@ -56,14 +62,13 @@ public class SliderControl : MonoBehaviour
         }
         else
         {
-            // If currently dragging, update slider position
+            // If dragging, update or stop based on input
             if (IsSelectButtonPressed())
             {
                 UpdateDragging();
             }
             else
             {
-                // If user released the button, stop dragging
                 StopDragging();
             }
         }
@@ -71,7 +76,6 @@ public class SliderControl : MonoBehaviour
 
     private void HandleHover()
     {
-        // Raycast to check if the pointer is over the slider
         Ray ray = GetPointerRay();
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
@@ -80,7 +84,7 @@ public class SliderControl : MonoBehaviour
                 if (!isHovering)
                 {
                     isHovering = true;
-                    // You could change appearance here if you like, e.g. highlight the slider
+                    // (Optional) Change appearance on hover
                 }
                 return;
             }
@@ -89,7 +93,7 @@ public class SliderControl : MonoBehaviour
         if (isHovering)
         {
             isHovering = false;
-            // Revert any hover appearance change
+            // (Optional) Revert hover appearance
         }
     }
 
@@ -99,8 +103,9 @@ public class SliderControl : MonoBehaviour
         Vector3? hitPoint = GetPointerWorldPoint();
         if (hitPoint.HasValue)
         {
-            // Calculate offset to ensure smooth dragging
-            dragOffset = transform.position.x - hitPoint.Value.x;
+            initialDragPoint = hitPoint.Value;
+            initialSliderValue = sliderValue;
+            initialRotationX = transform.eulerAngles.x;
         }
     }
 
@@ -110,15 +115,25 @@ public class SliderControl : MonoBehaviour
     }
 
     private void UpdateDragging()
-    {
-        Vector3? hitPoint = GetPointerWorldPoint();
-        if (hitPoint.HasValue)
-        {
-            float targetX = hitPoint.Value.x + dragOffset;
-            float newSliderValue = Mathf.InverseLerp(railStart, railEnd, Mathf.Clamp(targetX, railStart, railEnd));
-            SetSliderValue(newSliderValue);
-        }
-    }
+{
+    Vector3? hitPoint = GetPointerWorldPoint();
+    if (!hitPoint.HasValue) return;
+
+    Vector3 currentPoint = hitPoint.Value;
+    Vector3 delta = currentPoint - initialDragPoint;
+
+    // Adjust slider value based on horizontal movement
+    float horizontalDeltaX = delta.x;
+    float newSliderValue = initialSliderValue + (horizontalDeltaX / (railEnd - railStart));
+    SetSliderValue(newSliderValue);
+
+    // Adjust rotation based on vertical movement
+    float verticalMove = delta.z; 
+    float newRotationX = initialRotationX + (verticalMove * rotationFactor);
+
+    // Directly set rotation using known desired axes:
+    transform.rotation = Quaternion.Euler(newRotationX, 0f, 90f);
+}
 
     public void SetSliderValue(float value)
     {
@@ -129,7 +144,7 @@ public class SliderControl : MonoBehaviour
         transform.position = newPos;
     }
 
-    #region Input Helpers
+    #region Input and Ray Methods
 
     private Ray GetPointerRay()
     {
@@ -148,9 +163,9 @@ public class SliderControl : MonoBehaviour
     private Vector3? GetPointerWorldPoint()
     {
         Ray ray = GetPointerRay();
-
-        // Create a plane perpendicular to the camera direction, passing through the slider's current position
-        Plane plane = new Plane(mainCamera.transform.forward, transform.position);
+        // Instead of using camera forward, use a stable world direction:
+        // For example, a horizontal plane defined by Vector3.up:
+        Plane plane = new Plane(Camera.main.transform.forward, transform.position);
 
         if (plane.Raycast(ray, out float distance))
         {
@@ -163,12 +178,12 @@ public class SliderControl : MonoBehaviour
     {
         if (useVR)
         {
-            // VR input: Check for trigger press down
+            // VR button down
             return OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger);
         }
         else
         {
-            // Mouse input
+            // Mouse button down
             return Input.GetMouseButtonDown(0);
         }
     }
@@ -177,12 +192,12 @@ public class SliderControl : MonoBehaviour
     {
         if (useVR)
         {
-            // VR input: Check if trigger is still held
+            // VR button pressed
             return OVRInput.Get(OVRInput.Button.SecondaryHandTrigger);
         }
         else
         {
-            // Mouse input
+            // Mouse button held
             return Input.GetMouseButton(0);
         }
     }

@@ -318,7 +318,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 4
+  m_Constraints: 100
   m_CollisionDetection: 0
 --- !u!136 &575235926
 CapsuleCollider:
@@ -428,6 +428,7 @@ MonoBehaviour:
   rayInteractor: {fileID: 0}
   mainCamera: {fileID: 0}
   sliderValue: 0.5
+  rotationFactor: 45
 --- !u!1 &1048360290
 GameObject:
   m_ObjectHideFlags: 0
