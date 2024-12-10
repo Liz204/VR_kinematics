@@ -12,6 +12,7 @@ public class MechanicalArmBuilder : MonoBehaviour
     public GameObject jointPrefab;          // Prefab for the joint (e.g., a sphere)
     public GameObject armSegmentPrefab;     // Prefab for the arm segment (e.g., a cylinder)
     public float interactionPlaneDistance = 0.1f; // Distance of the interaction plane from the camera
+    private float zCoord; 
     public Color normalColor = Color.white;      // Color when joint is not selected
     public Color selectableColor = Color.green; // Color when joint is selectable
     public Color hoverColor = Color.yellow;     // Color when hovering over the joint
@@ -76,6 +77,8 @@ public class MechanicalArmBuilder : MonoBehaviour
                     var currentJoint = currentSegment.AddJoint();
                     currentJoint.X.SetEnabled(true);
                     currentJoint.X.Constrained = false;
+                    currentJoint.Y.SetEnabled(true);
+                    currentJoint.Y.Constrained = false;
                 }
 
                 if(lastGameObject != null){
