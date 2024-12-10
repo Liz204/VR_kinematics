@@ -128,6 +128,10 @@ public class MechanicalArmBuilder : MonoBehaviour
             currentJointRenderer.material.color = selectableColor; // Set the color back to selectable
             newJoint = null;
         }
+        if(!isDragging && OVRInput.GetDown(OVRInput.Button.One))
+        {
+            EndArmCreationMode();
+        }
     }
     }
 

@@ -1638,7 +1638,7 @@ MonoBehaviour:
   selectableColor: {r: 0, g: 1, b: 0, a: 1}
   hoverColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   isCreationMode: 1
-  endArmCreationButton: {fileID: 0}
+  endArmCreationButton: {fileID: 1213754259}
   target: {fileID: 1103514720}
   joints: []
   armSegments: []
