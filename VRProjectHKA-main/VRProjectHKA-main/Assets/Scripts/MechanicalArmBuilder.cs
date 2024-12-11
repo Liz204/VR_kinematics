@@ -94,56 +94,45 @@ public class MechanicalArmBuilder : MonoBehaviour
 
     void Update()
     {   
-        if (isCreationMode)
+        if(Input.GetKeyDown(KeyCode.M)){
+            Debug.LogError(bioIK.Root);
+        }
+        
+        if(isCreationMode){
+        if (isDragging && newJoint != null)
         {
-            if (isDragging && newJoint != null)
-            {
-                // Update the position of the new joint based on pointer position at the depth of the current joint
-                Vector3 targetPosition = GetPointerPositionWithRay();
-                newJoint.transform.position = targetPosition;
+            // Update the position of the new joint based on pointer position on the interaction plane
+            Vector3 targetPosition = GetPointerPositionOnInteractionPlane();
+            newJoint.transform.position = targetPosition;
 
-                // Update arm segment to connect currentJoint and newJoint
-                UpdateArmSegment();
-            }
+            // Update arm segment to connect currentJoint and newJoint
+            UpdateArmSegment();
+        }
 
-            // Check for pointer hover to change color
-            HandlePointerHover();
+        // Check for pointer hover to change color
+        HandlePointerHover();
 
-            // Check for input to select or create a joint
-            if (IsSelectButtonDown() && !isDragging && isHovering)
-            {
-                CreateNewJoint();
-            }
+        // Check for input to select or create a joint
+        if (IsSelectButtonDown() && !isDragging && isHovering)
+        {
+            CreateNewJoint();
+        }
 
-            // Release the new joint if the select button is released
-            if (IsSelectButtonUp() && isDragging)
-            {
-                isDragging = false;
-                currentJointRenderer.material.color = normalColor; // Reset the color of the current joint
-                currentJoint = newJoint;  // Make the new joint the current joint for the next segment
-                currentJointRenderer = currentJoint.GetComponent<Renderer>();
-                currentJointRenderer.material.color = selectableColor; // Set the color back to selectable
-                newJoint = null;
-            }
+        // Release the new joint if the select button is released
+        if (IsSelectButtonUp() && isDragging)
+        {
+            isDragging = false;
+            currentJointRenderer.material.color = normalColor; // Reset the color of the current joint
+            currentJoint = newJoint;  // Make the new joint the current joint for the next segment
+            currentJointRenderer = currentJoint.GetComponent<Renderer>();
+            currentJointRenderer.material.color = selectableColor; // Set the color back to selectable
+            newJoint = null;
+        }
+        if(!isDragging && OVRInput.GetDown(OVRInput.Button.One))
+        {
+            EndArmCreationMode();
         }
     }
-    
-
-    private Vector3 GetPointerPositionWithRay()
-    {
-        // Generate a ray from the camera or pointer
-        Ray ray = GetPointerRay();
-
-        // Plane at the depth of the current joint
-        Plane interactionPlane = new Plane(Camera.main.transform.forward, currentJoint.transform.position);
-
-        // Find the intersection point between the ray and the plane
-        if (interactionPlane.Raycast(ray, out float distance))
-        {
-            return ray.GetPoint(distance); // Return the point where the ray intersects the plane
-        }
-
-        return Vector3.zero; // Fallback in case the ray doesn't hit the plane
     }
 
     private void HandlePointerHover()
@@ -198,20 +187,44 @@ public class MechanicalArmBuilder : MonoBehaviour
     private Vector3 GetPointerPositionOnInteractionPlane()
     {
         // Create a plane at a fixed distance from the camera
-        Plane interactionPlane = new Plane(Camera.main.transform.forward, Camera.main.transform.position + Camera.main.transform.forward * interactionPlaneDistance);
+        Plane interactionPlane = new Plane(Camera.main.transform.forward, currentJoint.transform.position);
+
+        // Visualize the plane for debugging
+        //DrawDebugPlane(interactionPlane, currentJoint.transform.position, Color.green, 10, 1.0f);
 
         // Get the pointer ray
-        Ray ray = rayInteractor.Ray; // Obtén el rayo desde el RayInteractor
+        Ray ray = rayInteractor.Ray; // Obtain the ray from the RayInteractor
 
         // Find where the ray intersects with the interaction plane
-        if (Physics.Raycast(ray, out RaycastHit hit))
-    {
-        // Si el rayo golpea un objeto, devuelve su posición
-        return hit.point;
-    }
+        if (interactionPlane.Raycast(ray, out float distance))
+        {
+            return ray.GetPoint(distance);
+        }
 
         return Vector3.zero; // Fallback in case of an error
     }
+
+    // Helper function to draw the plane
+    private void DrawDebugPlane(Plane plane, Vector3 center, Color color, int gridSize, float cellSize)
+    {
+        Vector3 planeNormal = plane.normal;
+        Vector3 tangent = Vector3.Cross(planeNormal, Vector3.up).normalized;
+        Vector3 bitangent = Vector3.Cross(planeNormal, tangent);
+
+        for (int x = -gridSize; x <= gridSize; x++)
+        {
+            for (int z = -gridSize; z <= gridSize; z++)
+            {
+                Vector3 start = center + (tangent * x * cellSize) + (bitangent * z * cellSize);
+                Vector3 end1 = start + (tangent * cellSize);
+                Vector3 end2 = start + (bitangent * cellSize);
+
+                Debug.DrawLine(start, end1, color); // Draw horizontal lines
+                Debug.DrawLine(start, end2, color); // Draw vertical lines
+            }
+        }
+    }
+
 
     private Ray GetPointerRay()
     {
