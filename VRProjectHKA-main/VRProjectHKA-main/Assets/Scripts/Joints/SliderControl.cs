@@ -85,6 +85,8 @@ public class SliderControl : MonoBehaviour
                 {
                     isHovering = true;
                     // (Optional) Change appearance on hover
+                    // Change color to yellow
+                    GetComponent<Renderer>().material.color = Color.yellow;
                 }
                 return;
             }
@@ -94,6 +96,7 @@ public class SliderControl : MonoBehaviour
         {
             isHovering = false;
             // (Optional) Revert hover appearance
+            GetComponent<Renderer>().material.color = Color.gray;
         }
     }
 
