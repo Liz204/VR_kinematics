@@ -170,8 +170,6 @@ public class SliderControl : MonoBehaviour
         // For example, a horizontal plane defined by Vector3.up:
         Plane plane = new Plane(Camera.main.transform.forward, transform.position);
 
-        DebugPlaneAndRay(plane, ray, transform);
-
         if (plane.Raycast(ray, out float distance))
         {
             return ray.GetPoint(distance);
@@ -184,6 +182,9 @@ public class SliderControl : MonoBehaviour
         if (useVR)
         {
             // VR button down
+            if(OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger)){
+                 Debug.Log("Fisrt");
+            }
             return OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger);
         }
         else
@@ -198,6 +199,9 @@ public class SliderControl : MonoBehaviour
         if (useVR)
         {
             // VR button pressed
+            if(OVRInput.Get(OVRInput.Button.SecondaryHandTrigger)){
+                 Debug.Log("Second");
+            }
             return OVRInput.Get(OVRInput.Button.SecondaryHandTrigger);
         }
         else
@@ -205,45 +209,6 @@ public class SliderControl : MonoBehaviour
             // Mouse button held
             return Input.GetMouseButton(0);
         }
-    }
-
-    private void DebugPlaneAndRay(Plane plane, Ray ray, Transform sliderTransform)
-    {
-        // Use the slider's position as the center of the debug plane
-        Vector3 planeCenter = sliderTransform.position;
-
-        // Visualize the plane as a grid of lines
-        Vector3 planeNormal = plane.normal;
-
-        // Define plane size and step for visualization
-        float planeSize = 0.5f; // Adjust this for a larger or smaller plane visualization
-        int gridLines = 10; // Number of grid lines along each axis
-
-        for (int i = -gridLines; i <= gridLines; i++)
-        {
-            for (int j = -gridLines; j <= gridLines; j++)
-            {
-                // Calculate grid points on the plane
-                Vector3 point1 = planeCenter + (Vector3.right * i + Vector3.forward * j) * planeSize;
-                Vector3 point2 = planeCenter + (Vector3.right * (i + 1) + Vector3.forward * j) * planeSize;
-                Vector3 point3 = planeCenter + (Vector3.right * i + Vector3.forward * (j + 1)) * planeSize;
-
-                // Project points onto the plane
-                point1 = plane.ClosestPointOnPlane(point1);
-                point2 = plane.ClosestPointOnPlane(point2);
-                point3 = plane.ClosestPointOnPlane(point3);
-
-                // Draw the grid lines
-                Debug.DrawLine(point1, point2, Color.green);
-                Debug.DrawLine(point1, point3, Color.green);
-            }
-        }
-
-        // Draw the ray
-        Debug.DrawRay(ray.origin, ray.direction * 10f, Color.blue);
-
-        // Visualize the plane's normal
-        Debug.DrawLine(planeCenter, planeCenter + planeNormal * 0.5f, Color.red);
     }
 
     #endregion
