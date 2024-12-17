@@ -11,6 +11,9 @@ public class MechanicalArmBuilder : MonoBehaviour
     public RayInteractor rayInteractor;
     public GameObject jointPrefab;          // Prefab for the joint (e.g., a sphere)
     public GameObject armSegmentPrefab;     // Prefab for the arm segment (e.g., a cylinder)
+
+    public GameObject circlePrefab;         // Prefab for the circle visualization
+    
     public float interactionPlaneDistance = 0.1f; // Distance of the interaction plane from the camera
     private float zCoord; 
     public Color normalColor = Color.white;      // Color when joint is not selected
@@ -133,6 +136,7 @@ public class MechanicalArmBuilder : MonoBehaviour
             EndArmCreationMode();
         }
     }
+    
     }
 
     private void HandlePointerHover()
@@ -270,6 +274,49 @@ public class MechanicalArmBuilder : MonoBehaviour
 
             // Scale the arm segment to fit the distance between joints, keeping x and z constant
             armSegment.transform.localScale = new Vector3(0.1f, distance / 2f, 0.1f);
+
+
+            // Trigger angle visualization on a specific key or VR input
+        if ((OVRInput.GetDown(OVRInput.Button.Four)))
+        {
+            Debug.Log("Button Four Pressed");
+            VisualizeAngleBetweenLastTwoJoints();
+        }
+
         }
     }
+      private void VisualizeAngleBetweenLastTwoJoints()
+    {
+        // Asegúrate de que el currentJoint tiene asignado su JointProperties
+    JointProperties currentProperties = currentJoint.GetComponent<JointProperties>();
+
+        GameObject joint1 = currentJoint.previousJoint;
+        GameObject joint2 = currentJoint;
+        GameObject joint3 = currentJoint.nextJoint;
+ if (joint1== null || joint3 == null)
+    {
+        Debug.LogWarning("No hay suficientes joints conectados para calcular el ángulo.");
+        return;
+    }
+
+        Vector3 direction1 = joint2.transform.position - joint1.transform.position;
+        Vector3 direction2 = joint3.transform.position - joint2.transform.position;
+        float angle = Vector3.Angle(direction1, direction2);
+
+        
+        GameObject angleVisualizer = Instantiate(circlePrefab);
+        angleVisualizer.transform.position = joint2.transform.position;
+        angleVisualizer.transform.localScale = new Vector3(2f, 0.05f, 2f); // Adjust scale as needed
+        angleVisualizer.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+
+        // Update the text on the circle prefab
+        TextMesh textMesh = angleVisualizer.GetComponentInChildren<TextMesh>();
+        if (textMesh != null)
+        {
+            textMesh.text = $"Angle: {angle:F2}°";
+        }
+
+        Debug.Log($"Angle between the last two joints: {angle:F2}°");
+    }
+
 }

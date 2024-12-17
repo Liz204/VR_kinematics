@@ -14609,6 +14609,7 @@ MonoBehaviour:
   rayInteractor: {fileID: 1002903902}
   jointPrefab: {fileID: 54198034962711681, guid: 1b6e1731af5384cef8a4c3864891d9b7, type: 3}
   armSegmentPrefab: {fileID: 7135978286468741301, guid: 77e1e4ee4ecb24759994307409081810, type: 3}
+  circlePrefab: {fileID: 3515015538769154149, guid: 736d3739f953d1048ac09f38861de30b, type: 3}
   interactionPlaneDistance: 1
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   selectableColor: {r: 0, g: 1, b: 0, a: 1}
