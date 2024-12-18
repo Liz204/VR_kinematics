@@ -21,6 +21,11 @@ public class MechanicalArmBuilder : MonoBehaviour
     public Color hoverColor = Color.yellow;     // Color when hovering over the joint
     public bool isCreationMode = true;
 
+    public GameObject firstJoint;
+    public GameObject lastJoint;
+
+    public Vector3 direction2; 
+
     private GameObject currentJoint;        // The currently selected joint
     private GameObject newJoint;            // The new joint being created
     private GameObject armSegment;          // The arm segment connecting the joints
@@ -34,6 +39,11 @@ public class MechanicalArmBuilder : MonoBehaviour
 
     public List<GameObject> joints = new List<GameObject>();        // List to store joints
     public List<GameObject> armSegments = new List<GameObject>();   // List to store arm segments
+
+    [SerializeField] 
+    private Text _title;
+    [SerializeField] 
+    private Text _title2;
 
     void Start()
     {   
@@ -56,6 +66,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         endArmCreationButton.onClick.AddListener(EndArmCreationMode);
 
         joints.Add(currentJoint);
+        firstJoint = currentJoint;
     }
 
     void EndArmCreationMode(){
@@ -126,6 +137,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         {
             isDragging = false;
             currentJointRenderer.material.color = normalColor; // Reset the color of the current joint
+            lastJoint = currentJoint;
             currentJoint = newJoint;  // Make the new joint the current joint for the next segment
             currentJointRenderer = currentJoint.GetComponent<Renderer>();
             currentJointRenderer.material.color = selectableColor; // Set the color back to selectable
@@ -186,6 +198,7 @@ public class MechanicalArmBuilder : MonoBehaviour
 
         joints.Add(newJoint);
         armSegments.Add(armSegment);
+        _title2.text = (_title2.text+_title.text);
     }
 
     private Vector3 GetPointerPositionOnInteractionPlane()
@@ -277,46 +290,55 @@ public class MechanicalArmBuilder : MonoBehaviour
 
 
             // Trigger angle visualization on a specific key or VR input
-        if ((OVRInput.GetDown(OVRInput.Button.Four)))
+        if ( direction2!= Vector3.zero)
         {
-            Debug.Log("Button Four Pressed");
-            VisualizeAngleBetweenLastTwoJoints();
+            //Debug.Log("Button Four Pressed");
+            VisualizeAngleBetweenLastTwoJoints(direction,direction2);
         }
-
+            direction2 = direction;
         }
     }
-      private void VisualizeAngleBetweenLastTwoJoints()
+      private void VisualizeAngleBetweenLastTwoJoints(Vector3 direction1,Vector3 directiontwo)
     {
         // Asegúrate de que el currentJoint tiene asignado su JointProperties
     JointProperties currentProperties = currentJoint.GetComponent<JointProperties>();
 
-        GameObject joint1 = currentJoint.previousJoint;
+        GameObject joint1 = firstJoint;
         GameObject joint2 = currentJoint;
-        GameObject joint3 = currentJoint.nextJoint;
+        GameObject joint3 = lastJoint;
  if (joint1== null || joint3 == null)
     {
         Debug.LogWarning("No hay suficientes joints conectados para calcular el ángulo.");
         return;
     }
 
-        Vector3 direction1 = joint2.transform.position - joint1.transform.position;
-        Vector3 direction2 = joint3.transform.position - joint2.transform.position;
-        float angle = Vector3.Angle(direction1, direction2);
+        //Vector3 direction1 = joint2.transform.position - joint1.transform.position;
 
-        
-        GameObject angleVisualizer = Instantiate(circlePrefab);
+        directiontwo = joint3.transform.position - joint2.transform.position;
+        float angle = Vector3.Angle(direction1, directiontwo);
+        Debug.Log(direction1);
+        Debug.Log(directiontwo);
+        Debug.Log(joint1.transform.position);
+
+        /*GameObject angleVisualizer = Instantiate(circlePrefab);
         angleVisualizer.transform.position = joint2.transform.position;
-        angleVisualizer.transform.localScale = new Vector3(2f, 0.05f, 2f); // Adjust scale as needed
+        angleVisualizer.transform.localScale = new Vector3(1f, 0.05f, 1f); // Adjust scale as needed
         angleVisualizer.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
 
         // Update the text on the circle prefab
-        TextMesh textMesh = angleVisualizer.GetComponentInChildren<TextMesh>();
+        TextMeshPro textMesh = angleVisualizer.GetComponentInChildren<TextMeshPro>();
+        // Busca el componente TextMeshPro en el hijo llamado "Text (TMP)"
+        //TextMeshPro textMesh = angleVisualizer.transform.Find("Text (TMP)")?.GetComponent<TextMeshPro>();
+        textMesh.text = $"Angle: {angle:F2}°";
+        Debug.Log($"TextMesh updated: {textMesh.text}");
         if (textMesh != null)
         {
             textMesh.text = $"Angle: {angle:F2}°";
-        }
+            Debug.Log($"TextMesh updated: {textMesh.text}");
+        }*/
 
         Debug.Log($"Angle between the last two joints: {angle:F2}°");
+        _title.text = ( $"Angle: {angle:F2}°     ");
     }
 
 }
