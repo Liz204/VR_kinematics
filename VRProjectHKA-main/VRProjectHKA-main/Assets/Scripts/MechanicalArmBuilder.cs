@@ -40,6 +40,8 @@ public class MechanicalArmBuilder : MonoBehaviour
     public List<GameObject> joints = new List<GameObject>();        // List to store joints
     public List<GameObject> armSegments = new List<GameObject>();   // List to store arm segments
 
+    Vector3 direction;
+
     [SerializeField] 
     private Text _title;
     [SerializeField] 
@@ -278,7 +280,7 @@ public class MechanicalArmBuilder : MonoBehaviour
     {
         if (armSegment != null && currentJoint != null && newJoint != null)
         {
-            Vector3 direction = newJoint.transform.position - currentJoint.transform.position;
+            direction = newJoint.transform.position - currentJoint.transform.position;
             float distance = direction.magnitude;
 
             // Position the arm segment between the two joints
@@ -340,5 +342,4 @@ public class MechanicalArmBuilder : MonoBehaviour
         Debug.Log($"Angle between the last two joints: {angle:F2}°");
         _title.text = ( $"Angle: {angle:F2}°     ");
     }
-
 }
