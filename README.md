@@ -1,14 +1,9 @@
 Pablo Torres 
 
-# To Do
-**VR Text 3.4**: 
-- Hand controllers input are not being recognized (Possible solution use the "Input Manager (Old)")
-- The stats Canva still not being shown
 
 # General
 ## Unity
 **Version Used**: Unity 6 (60000.0.28f1) LTS
-**My Scenes**: Movement
 	
 ## Videos that I followed:
 - Unity / VR First Steps: https://youtu.be/YwFXQeBmxZ4
