@@ -123,9 +123,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jointType: 0
   enabledX: 1
+  constrainedX: 0
   lowerLimitX: 0
   upperLimitX: 1
   enabledY: 1
+  constrainedY: 0
   lowerLimitY: 0
   upperLimitY: 1
   isFixed: 0

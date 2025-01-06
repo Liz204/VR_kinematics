@@ -182,6 +182,9 @@ public class SliderControl : MonoBehaviour
         if (useVR)
         {
             // VR button down
+            if(OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger)){
+                 Debug.Log("Fisrt");
+            }
             return OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger);
         }
         else
@@ -196,6 +199,9 @@ public class SliderControl : MonoBehaviour
         if (useVR)
         {
             // VR button pressed
+            if(OVRInput.Get(OVRInput.Button.SecondaryHandTrigger)){
+                 Debug.Log("Second");
+            }
             return OVRInput.Get(OVRInput.Button.SecondaryHandTrigger);
         }
         else
