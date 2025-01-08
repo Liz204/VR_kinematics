@@ -72,7 +72,10 @@ public class MechanicalArmBuilder : MonoBehaviour
     }
 
     void EndArmCreationMode(){
+
+
         isCreationMode = false;
+        target.transform.position= (currentJoint.transform.position);
         currentJointRenderer = currentJoint.GetComponent<Renderer>();
         currentJointRenderer.material.color = normalColor;
         Destroy(endArmCreationButton.gameObject);
@@ -102,9 +105,12 @@ public class MechanicalArmBuilder : MonoBehaviour
                 }
                 lastGameObject = currentGameObject;
             }
+            
+
             currentSegment.AddObjective(ObjectiveType.Position);
             Position objective = (Position)currentSegment.Objectives[0];
             objective.SetTargetTransform(target.transform);
+
         }
     }
 
@@ -201,6 +207,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         joints.Add(newJoint);
         armSegments.Add(armSegment);
         _title2.text = (_title2.text+_title.text);
+        
     }
 
     private Vector3 GetPointerPositionOnInteractionPlane()
