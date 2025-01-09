@@ -167,12 +167,13 @@ public class MechanicalArmBuilder : MonoBehaviour
         }
         //Debug.Log("UPDATE");
         //UpdateJointAngles();
-        if(OVRInput.GetDown(OVRInput.Button.Four))
+        
+    }
+    if(OVRInput.GetDown(OVRInput.Button.Four))
         {
             Debug.Log("yCLICKED");
             UpdateJointAngles();
         }
-    }
     
     }
 
@@ -325,7 +326,7 @@ public class MechanicalArmBuilder : MonoBehaviour
             if (OVRInput.GetDown(OVRInput.Button.Four))
         {
             Debug.Log("Botón trasero presionado");
-            EndArmCreationMode();
+            UpdateJointAngles();
         }
         
         }
@@ -415,7 +416,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         }*/
 
         Debug.Log($"Angle is: {angle:F2}°");
-        //_title.text = ( $"Angle: {angle:F2}°     ");
+        _title.text = ( $"Angle: {angle:F2}°     ");
     }
 
         // Nueva función para calcular y visualizar los ángulos
