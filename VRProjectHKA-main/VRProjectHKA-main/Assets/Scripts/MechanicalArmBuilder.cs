@@ -421,7 +421,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         // Nueva función para calcular y visualizar los ángulos
 public void UpdateJointAngles()
 {
-var currentGameObject = this.transform;
+var currentGameObject =     firstJoint.transform;
 Transform lastGameObject = null;
 while (currentGameObject.childCount > 0)
 {
