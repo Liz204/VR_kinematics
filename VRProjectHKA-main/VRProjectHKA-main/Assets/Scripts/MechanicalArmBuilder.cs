@@ -66,12 +66,13 @@ public class MechanicalArmBuilder : MonoBehaviour
         currentJointRenderer = currentJoint.GetComponent<Renderer>();
         currentJointRenderer.material.color = selectableColor; // Set the initial selectable color
         endArmCreationButton.onClick.AddListener(EndArmCreationMode);
-
         joints.Add(currentJoint);
         firstJoint = currentJoint;
+        // Detectar si el botón trasero derecho fue presionado
+        
     }
 
-    void EndArmCreationMode(){
+    public void EndArmCreationMode(){
 
 
         isCreationMode = false;
@@ -102,11 +103,20 @@ public class MechanicalArmBuilder : MonoBehaviour
 
                 if(lastGameObject != null){
                     properties.setPreviousJoint(lastGameObject);
+
+                    if (currentSegment.Childs.Length>0){
+                        Transform NextJoint= null;
+                        NextJoint= currentGameObject.GetChild(0);
+                        Transform PreviousJoint= lastGameObject;
+                        //VisualizeAngleDinamic(PreviousJoint, currentGameObject, NextJoint);
+                    }
+                    
                 }
+                
                 lastGameObject = currentGameObject;
             }
             
-
+            UpdateJointAngles();
             currentSegment.AddObjective(ObjectiveType.Position);
             Position objective = (Position)currentSegment.Objectives[0];
             objective.SetTargetTransform(target.transform);
@@ -154,6 +164,13 @@ public class MechanicalArmBuilder : MonoBehaviour
         if(!isDragging && OVRInput.GetDown(OVRInput.Button.One))
         {
             EndArmCreationMode();
+        }
+        //Debug.Log("UPDATE");
+        //UpdateJointAngles();
+        if(OVRInput.GetDown(OVRInput.Button.Four))
+        {
+            Debug.Log("yCLICKED");
+            UpdateJointAngles();
         }
     }
     
@@ -302,7 +319,15 @@ public class MechanicalArmBuilder : MonoBehaviour
         if ( direction2!= Vector3.zero)
         {
             //Debug.Log("Button Four Pressed");
-            VisualizeAngleBetweenLastTwoJoints(direction,direction2);
+            //VisualizeAngleBetweenLastTwoJoints(direction,direction2);
+
+            
+            if (OVRInput.GetDown(OVRInput.Button.Four))
+        {
+            Debug.Log("Botón trasero presionado");
+            EndArmCreationMode();
+        }
+        
         }
             direction2 = direction;
         }
@@ -346,7 +371,70 @@ public class MechanicalArmBuilder : MonoBehaviour
             Debug.Log($"TextMesh updated: {textMesh.text}");
         }*/
 
-        Debug.Log($"Angle between the last two joints: {angle:F2}°");
+        //Debug.Log($"Angle between the last two joints: {angle:F2}°");
         _title.text = ( $"Angle: {angle:F2}°     ");
     }
+    private void VisualizeAngleDinamic(Transform firstJoint, Transform currentJoint,Transform lastJoint)
+    {
+        // Asegúrate de que el currentJoint tiene asignado su JointProperties
+    JointProperties currentProperties = currentJoint.GetComponent<JointProperties>();
+
+        Transform joint1 = firstJoint;
+        Transform joint2 = currentJoint;
+        Transform joint3 = lastJoint;
+
+ if (joint1== null || joint3 == null)
+    {
+        Debug.LogWarning("No hay suficientes joints conectados para calcular el ángulo.");
+        return;
+    }
+
+        Vector3 direction1 = joint2.position - joint1.position;
+
+        Vector3 directiontwo = joint3.position - joint2.position;
+        float angle = Vector3.Angle(direction1, directiontwo);
+        Debug.Log(direction1);
+        Debug.Log(directiontwo);
+        Debug.Log(joint1.transform.position);
+
+        /*GameObject angleVisualizer = Instantiate(circlePrefab);
+        angleVisualizer.transform.position = joint2.transform.position;
+        angleVisualizer.transform.localScale = new Vector3(1f, 0.05f, 1f); // Adjust scale as needed
+        angleVisualizer.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+
+        // Update the text on the circle prefab
+        TextMeshPro textMesh = angleVisualizer.GetComponentInChildren<TextMeshPro>();
+        // Busca el componente TextMeshPro en el hijo llamado "Text (TMP)"
+        //TextMeshPro textMesh = angleVisualizer.transform.Find("Text (TMP)")?.GetComponent<TextMeshPro>();
+        textMesh.text = $"Angle: {angle:F2}°";
+        Debug.Log($"TextMesh updated: {textMesh.text}");
+        if (textMesh != null)
+        {
+            textMesh.text = $"Angle: {angle:F2}°";
+            Debug.Log($"TextMesh updated: {textMesh.text}");
+        }*/
+
+        Debug.Log($"Angle is: {angle:F2}°");
+        //_title.text = ( $"Angle: {angle:F2}°     ");
+    }
+
+        // Nueva función para calcular y visualizar los ángulos
+public void UpdateJointAngles()
+{
+var currentGameObject = this.transform;
+Transform lastGameObject = null;
+while (currentGameObject.childCount > 0)
+{
+    Transform nextGameObject = currentGameObject.GetChild(0);
+
+    if (lastGameObject != null)
+    {
+        VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
+    }
+
+    lastGameObject = currentGameObject;
+    currentGameObject = nextGameObject;
+}
+} 
+
 }
