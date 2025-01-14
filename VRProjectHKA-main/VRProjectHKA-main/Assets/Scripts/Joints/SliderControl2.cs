@@ -1,12 +1,13 @@
 using UnityEngine;
 using Oculus.Interaction; // For RayInteractor and VR input handling
 
-public class SliderControl : MonoBehaviour
+public class SliderControl2 : MonoBehaviour
 {
     [Header("References")]
     public Transform rail;             // The rail (outer cylinder)
     public RayInteractor rayInteractor; // VR Ray Interactor (if available)
     public Camera mainCamera;          // Fallback camera for mouse input if VR not available
+    public GameObject slider;
 
     [Header("Slider Settings")]
     [Range(0f, 1f)]
@@ -126,25 +127,25 @@ public class SliderControl : MonoBehaviour
     Vector3 delta = currentPoint - initialDragPoint;
 
     // Adjust slider value based on horizontal movement
-    float horizontalDeltaX = delta.x;
-    float newSliderValue = initialSliderValue + (horizontalDeltaX / (railEnd - railStart));
-    SetSliderValue(newSliderValue);
+    // float horizontalDeltaX = delta.x;
+    // float newSliderValue = initialSliderValue + (horizontalDeltaX / (railEnd - railStart));
+    // SetSliderValue(newSliderValue);
 
-    // // Adjust rotation based on vertical movement
-    // float verticalMove = delta.z; 
-    // float newRotationX = initialRotationX + (verticalMove * rotationFactor);
+    // Adjust rotation based on vertical movement
+    float verticalMove = delta.z; 
+    float newRotationX = initialRotationX + (verticalMove * rotationFactor);
 
-    // // Directly set rotation using known desired axes:
-    // transform.rotation = Quaternion.Euler(newRotationX, 0f, 90f);
+    // Directly set rotation using known desired axes:
+    slider.transform.rotation = Quaternion.Euler(newRotationX, 0f, 90f);
 }
 
     public void SetSliderValue(float value)
     {
         sliderValue = Mathf.Clamp01(value);
         float xPos = Mathf.Lerp(railStart, railEnd, sliderValue);
-        Vector3 newPos = transform.position;
+        Vector3 newPos = slider.transform.position;
         newPos.x = xPos;
-        transform.position = newPos;
+        slider.transform.position = newPos;
     }
 
     #region Input and Ray Methods
