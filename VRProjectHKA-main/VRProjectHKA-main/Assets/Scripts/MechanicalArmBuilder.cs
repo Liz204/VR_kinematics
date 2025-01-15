@@ -34,6 +34,7 @@ public class MechanicalArmBuilder : MonoBehaviour
     private bool isHovering = false;        // Is the pointer hovering over the joint?
     public Button endArmCreationButton;
     public GameObject target;
+    public GameObject canva;
 
     private BioIK.BioIK bioIK;
 
@@ -46,6 +47,7 @@ public class MechanicalArmBuilder : MonoBehaviour
     private Text _title;
     [SerializeField] 
     private Text _title2;
+
 
     void Start()
     {   
@@ -120,6 +122,7 @@ public class MechanicalArmBuilder : MonoBehaviour
             currentSegment.AddObjective(ObjectiveType.Position);
             Position objective = (Position)currentSegment.Objectives[0];
             objective.SetTargetTransform(target.transform);
+            canva.SetActive(false);
 
         }
     }
@@ -169,10 +172,12 @@ public class MechanicalArmBuilder : MonoBehaviour
         //UpdateJointAngles();
         
     }
-    if(OVRInput.GetDown(OVRInput.Button.Four))
+    if(OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
         {
             Debug.Log("yCLICKED");
+            canva.SetActive(true);
             UpdateJointAngles();
+          
         }
     
     }
@@ -320,7 +325,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         if ( direction2!= Vector3.zero)
         {
             //Debug.Log("Button Four Pressed");
-            //VisualizeAngleBetweenLastTwoJoints(direction,direction2);
+            VisualizeAngleBetweenLastTwoJoints(direction,direction2);
 
             
             if (OVRInput.GetDown(OVRInput.Button.Four))
@@ -351,9 +356,9 @@ public class MechanicalArmBuilder : MonoBehaviour
 
         directiontwo = joint3.transform.position - joint2.transform.position;
         float angle = Vector3.Angle(direction1, directiontwo);
-        Debug.Log(direction1);
-        Debug.Log(directiontwo);
-        Debug.Log(joint1.transform.position);
+        //Debug.Log(direction1);
+        //Debug.Log(directiontwo);
+        //Debug.Log(joint1.transform.position);
 
         /*GameObject angleVisualizer = Instantiate(circlePrefab);
         angleVisualizer.transform.position = joint2.transform.position;
@@ -424,6 +429,7 @@ public void UpdateJointAngles()
 {
 var currentGameObject =     firstJoint.transform;
 Transform lastGameObject = null;
+_title2.text = "";
 while (currentGameObject.childCount > 0)
 {
     Transform nextGameObject = currentGameObject.GetChild(0);
@@ -431,6 +437,7 @@ while (currentGameObject.childCount > 0)
     if (lastGameObject != null)
     {
         VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
+        _title2.text = (_title2.text+_title.text);
     }
 
     lastGameObject = currentGameObject;
