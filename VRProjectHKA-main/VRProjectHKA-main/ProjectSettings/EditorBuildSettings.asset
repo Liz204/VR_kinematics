@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ScrewJointScene.unity
     guid: 4478c6bfeb45f4affbbba2cf555a2f96
+  - enabled: 1
+    path: Assets/Scenes/PinJoint.unity
+    guid: a7a473e222bc641e28c3bc2796dd0d69
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 7b5198fa288ba7342854742f8e1dadcc, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

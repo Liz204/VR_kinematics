@@ -60,7 +60,7 @@ public class ButtonRay : MonoBehaviour
     private bool IsSelectButtonDown()
     {
         // Verificar si se presiona el botón del VR controller
-        return OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger);
+        return OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger);
     }
 
     private void ChangeScene()
