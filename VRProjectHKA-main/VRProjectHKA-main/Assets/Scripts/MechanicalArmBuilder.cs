@@ -20,6 +20,8 @@ public class MechanicalArmBuilder : MonoBehaviour
     public Color selectableColor = Color.green; // Color when joint is selectable
     public Color hoverColor = Color.yellow;     // Color when hovering over the joint
     public bool isCreationMode = true;
+    public GameObject firstJoint;
+    public GameObject lastJoint;
 
     public GameObject firstJoint;
     public GameObject lastJoint;
@@ -70,8 +72,6 @@ public class MechanicalArmBuilder : MonoBehaviour
         endArmCreationButton.onClick.AddListener(EndArmCreationMode);
         joints.Add(currentJoint);
         firstJoint = currentJoint;
-        // Detectar si el botón trasero derecho fue presionado
-        
     }
 
     public void EndArmCreationMode(){
@@ -162,6 +162,7 @@ public class MechanicalArmBuilder : MonoBehaviour
             currentJoint = newJoint;  // Make the new joint the current joint for the next segment
             currentJointRenderer = currentJoint.GetComponent<Renderer>();
             currentJointRenderer.material.color = selectableColor; // Set the color back to selectable
+            lastJoint = currentJoint;
             newJoint = null;
         }
         if(!isDragging && OVRInput.GetDown(OVRInput.Button.One))
