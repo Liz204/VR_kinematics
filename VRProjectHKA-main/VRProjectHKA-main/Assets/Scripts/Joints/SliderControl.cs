@@ -130,12 +130,12 @@ public class SliderControl : MonoBehaviour
     float newSliderValue = initialSliderValue + (horizontalDeltaX / (railEnd - railStart));
     SetSliderValue(newSliderValue);
 
-    // Adjust rotation based on vertical movement
-    float verticalMove = delta.z; 
-    float newRotationX = initialRotationX + (verticalMove * rotationFactor);
+    // // Adjust rotation based on vertical movement
+    // float verticalMove = delta.z; 
+    // float newRotationX = initialRotationX + (verticalMove * rotationFactor);
 
-    // Directly set rotation using known desired axes:
-    transform.rotation = Quaternion.Euler(newRotationX, 0f, 90f);
+    // // Directly set rotation using known desired axes:
+    // transform.rotation = Quaternion.Euler(newRotationX, 0f, 90f);
 }
 
     public void SetSliderValue(float value)

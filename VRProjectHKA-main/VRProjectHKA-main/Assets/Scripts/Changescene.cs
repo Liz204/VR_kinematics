@@ -14,5 +14,6 @@ public class ChangeSceneOnBackButton : MonoBehaviour
             Debug.Log("Botón trasero presionado. Cambiando de escena...");
             SceneManager.LoadScene(sceneToLoad);
         }
+        
     }
 }
