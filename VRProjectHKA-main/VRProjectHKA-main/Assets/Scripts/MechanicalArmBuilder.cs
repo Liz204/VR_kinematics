@@ -346,39 +346,58 @@ public class MechanicalArmBuilder : MonoBehaviour
 
     private void HandleLastJointHoverAndDrag()
     {
-        // Safety checks
-        if (lastJoint == null || lastJointRenderer == null || rayInteractor == null)
+        
+        if (lastJoint == null)
+        {
+            Debug.LogWarning("Cannot drag last joint because lastJoint is NULL!");
             return;
+        }
+        if (lastJointRenderer == null)
+        {
+            Debug.LogWarning($"No renderer on {lastJoint.name}, cannot show hover color!");
+            return;
+        }
+        if (rayInteractor == null)
+        {
+            Debug.LogWarning("No rayInteractor assigned, cannot raycast to last joint!");
+            return;
+        }
 
-        // Check if we're hovering the last joint
+        // Step 1: Check hover
         bool wasHovering = isHoveringLastJoint;
         isHoveringLastJoint = false;
 
         Ray ray = rayInteractor.Ray;
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if (hit.collider != null && hit.collider.gameObject == lastJoint)
+            Debug.Log($"RaycastHit: {hit.collider.gameObject.name}");
+            if (hit.collider.gameObject == lastJoint)
             {
                 isHoveringLastJoint = true;
+                Debug.Log("Hovering over LAST JOINT!");
             }
         }
+        else
+        {
+            Debug.Log("Raycast did not hit anything.");
+        }
 
-        // Color changes on hover
+        // Hover color changes
         if (!wasHovering && isHoveringLastJoint && !isDraggingTarget)
         {
-            // Just started hovering
+            Debug.Log("Just started hovering lastJoint. Changing color to hoverColor.");
             lastJointRenderer.material.color = hoverColor;
         }
         else if (wasHovering && !isHoveringLastJoint && !isDraggingTarget)
         {
-            // Stopped hovering
+            Debug.Log("Stopped hovering lastJoint. Reverting color to normalColor.");
             lastJointRenderer.material.color = normalColor;
         }
 
-        // Handle "Select" to start/stop dragging
+        // Step 2: Handle “drag” input
         if (!isDraggingTarget && isHoveringLastJoint && IsSelectButtonDown())
         {
-            // Start dragging
+            Debug.Log("Select button pressed while hovering lastJoint -> start dragging target.");
             isDraggingTarget = true;
         }
 
@@ -386,9 +405,9 @@ public class MechanicalArmBuilder : MonoBehaviour
         {
             MoveTargetWithRay();
 
-            // If user releases the button, stop dragging
             if (IsSelectButtonUp())
             {
+                Debug.Log("Select button released -> stop dragging target.");
                 isDraggingTarget = false;
                 lastJointRenderer.material.color = normalColor;
             }
@@ -397,13 +416,19 @@ public class MechanicalArmBuilder : MonoBehaviour
 
     private void MoveTargetWithRay()
     {
+        // We pick a plane near the last joint, oriented by camera's forward
         Plane plane = new Plane(Camera.main.transform.forward, lastJoint.transform.position);
-
         Ray ray = rayInteractor.Ray;
+
         if (plane.Raycast(ray, out float distance))
         {
             Vector3 newPosition = ray.GetPoint(distance);
+            Debug.Log($"Moving target to {newPosition}");
             target.transform.position = newPosition;
+        }
+        else
+        {
+            Debug.LogWarning("Plane.Raycast failed: no intersection between ray and plane!");
         }
     }
 
