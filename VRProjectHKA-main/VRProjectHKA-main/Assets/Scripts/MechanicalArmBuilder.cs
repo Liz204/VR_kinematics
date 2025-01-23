@@ -23,9 +23,6 @@ public class MechanicalArmBuilder : MonoBehaviour
     public GameObject firstJoint;
     public GameObject lastJoint;
 
-    public GameObject firstJoint;
-    public GameObject lastJoint;
-
     public Vector3 direction2; 
 
     private GameObject currentJoint;        // The currently selected joint
@@ -162,7 +159,6 @@ public class MechanicalArmBuilder : MonoBehaviour
             currentJoint = newJoint;  // Make the new joint the current joint for the next segment
             currentJointRenderer = currentJoint.GetComponent<Renderer>();
             currentJointRenderer.material.color = selectableColor; // Set the color back to selectable
-            lastJoint = currentJoint;
             newJoint = null;
         }
         if(!isDragging && OVRInput.GetDown(OVRInput.Button.One))
