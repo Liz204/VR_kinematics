@@ -47,6 +47,10 @@ public class MechanicalArmBuilder : MonoBehaviour
     [SerializeField] 
     private Text _title2;
 
+    private bool isDraggingTarget = false;     // Are we currently dragging the target?
+    private bool isHoveringLastJoint = false;  // Are we hovering over the last joint?
+    private Renderer lastJointRenderer;        // Renderer for the last joint
+
 
     void Start()
     {   
@@ -73,8 +77,9 @@ public class MechanicalArmBuilder : MonoBehaviour
 
     public void EndArmCreationMode(){
 
-
+        lastJoint = currentJoint;
         isCreationMode = false;
+        lastJointRenderer = lastJoint.GetComponent<Renderer>();
         target.transform.position= (currentJoint.transform.position);
         currentJointRenderer = currentJoint.GetComponent<Renderer>();
         currentJointRenderer.material.color = normalColor;
@@ -168,6 +173,9 @@ public class MechanicalArmBuilder : MonoBehaviour
         //Debug.Log("UPDATE");
         //UpdateJointAngles();
         
+    }
+    else {
+        HandleLastJointHoverAndDrag();
     }
     if(OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
         {
@@ -335,6 +343,70 @@ public class MechanicalArmBuilder : MonoBehaviour
             direction2 = direction;
         }
     }
+
+    private void HandleLastJointHoverAndDrag()
+    {
+        // Safety checks
+        if (lastJoint == null || lastJointRenderer == null || rayInteractor == null)
+            return;
+
+        // Check if we're hovering the last joint
+        bool wasHovering = isHoveringLastJoint;
+        isHoveringLastJoint = false;
+
+        Ray ray = rayInteractor.Ray;
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            if (hit.collider != null && hit.collider.gameObject == lastJoint)
+            {
+                isHoveringLastJoint = true;
+            }
+        }
+
+        // Color changes on hover
+        if (!wasHovering && isHoveringLastJoint && !isDraggingTarget)
+        {
+            // Just started hovering
+            lastJointRenderer.material.color = hoverColor;
+        }
+        else if (wasHovering && !isHoveringLastJoint && !isDraggingTarget)
+        {
+            // Stopped hovering
+            lastJointRenderer.material.color = normalColor;
+        }
+
+        // Handle "Select" to start/stop dragging
+        if (!isDraggingTarget && isHoveringLastJoint && IsSelectButtonDown())
+        {
+            // Start dragging
+            isDraggingTarget = true;
+        }
+
+        if (isDraggingTarget)
+        {
+            MoveTargetWithRay();
+
+            // If user releases the button, stop dragging
+            if (IsSelectButtonUp())
+            {
+                isDraggingTarget = false;
+                lastJointRenderer.material.color = normalColor;
+            }
+        }
+    }
+
+    private void MoveTargetWithRay()
+    {
+        Plane plane = new Plane(Camera.main.transform.forward, lastJoint.transform.position);
+
+        Ray ray = rayInteractor.Ray;
+        if (plane.Raycast(ray, out float distance))
+        {
+            Vector3 newPosition = ray.GetPoint(distance);
+            target.transform.position = newPosition;
+        }
+    }
+
       private void VisualizeAngleBetweenLastTwoJoints(Vector3 direction1,Vector3 directiontwo)
     {
         // Asegúrate de que el currentJoint tiene asignado su JointProperties
