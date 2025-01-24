@@ -49,7 +49,10 @@ public class MechanicalArmBuilder : MonoBehaviour
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     private bool isDraggingTarget = false;     // Are we currently dragging the target?
@@ -57,6 +60,9 @@ public class MechanicalArmBuilder : MonoBehaviour
     private Renderer lastJointRenderer;        // Renderer for the last joint
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -88,8 +94,14 @@ public class MechanicalArmBuilder : MonoBehaviour
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
         isCreationMode = false;
+=======
+        lastJoint = currentJoint;
+        isCreationMode = false;
+        lastJointRenderer = lastJoint.GetComponent<Renderer>();
+>>>>>>> Stashed changes
 =======
         lastJoint = currentJoint;
         isCreationMode = false;
@@ -196,6 +208,12 @@ public class MechanicalArmBuilder : MonoBehaviour
     }
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+    else {
+        HandleLastJointHoverAndDrag();
+    }
+>>>>>>> Stashed changes
 =======
     else {
         HandleLastJointHoverAndDrag();
@@ -374,7 +392,10 @@ public class MechanicalArmBuilder : MonoBehaviour
     }
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 
@@ -467,6 +488,9 @@ public class MechanicalArmBuilder : MonoBehaviour
     }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

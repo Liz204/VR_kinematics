@@ -77,7 +77,11 @@ QualitySettings:
     anisotropicTextures: 1
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     antiAliasing: 2
+=======
+    antiAliasing: 0
+>>>>>>> Stashed changes
 =======
     antiAliasing: 0
 >>>>>>> Stashed changes
