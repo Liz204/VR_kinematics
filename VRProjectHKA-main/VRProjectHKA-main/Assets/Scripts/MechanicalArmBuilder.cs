@@ -47,6 +47,13 @@ public class MechanicalArmBuilder : MonoBehaviour
     [SerializeField] 
     private Text _title2;
 
+<<<<<<< Updated upstream
+=======
+    private bool isDraggingTarget = false;     // Are we currently dragging the target?
+    private bool isHoveringLastJoint = false;  // Are we hovering over the last joint?
+    private Renderer lastJointRenderer;        // Renderer for the last joint
+
+>>>>>>> Stashed changes
 
     void Start()
     {   
@@ -73,8 +80,14 @@ public class MechanicalArmBuilder : MonoBehaviour
 
     public void EndArmCreationMode(){
 
+<<<<<<< Updated upstream
 
         isCreationMode = false;
+=======
+        lastJoint = currentJoint;
+        isCreationMode = false;
+        lastJointRenderer = lastJoint.GetComponent<Renderer>();
+>>>>>>> Stashed changes
         target.transform.position= (currentJoint.transform.position);
         currentJointRenderer = currentJoint.GetComponent<Renderer>();
         currentJointRenderer.material.color = normalColor;
@@ -169,6 +182,12 @@ public class MechanicalArmBuilder : MonoBehaviour
         //UpdateJointAngles();
         
     }
+<<<<<<< Updated upstream
+=======
+    else {
+        HandleLastJointHoverAndDrag();
+    }
+>>>>>>> Stashed changes
     if(OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
         {
             Debug.Log("yCLICKED");
@@ -335,6 +354,98 @@ public class MechanicalArmBuilder : MonoBehaviour
             direction2 = direction;
         }
     }
+<<<<<<< Updated upstream
+=======
+
+    private void HandleLastJointHoverAndDrag()
+    {
+        
+        if (lastJoint == null)
+        {
+            Debug.LogWarning("Cannot drag last joint because lastJoint is NULL!");
+            return;
+        }
+        if (lastJointRenderer == null)
+        {
+            Debug.LogWarning($"No renderer on {lastJoint.name}, cannot show hover color!");
+            return;
+        }
+        if (rayInteractor == null)
+        {
+            Debug.LogWarning("No rayInteractor assigned, cannot raycast to last joint!");
+            return;
+        }
+
+        // Step 1: Check hover
+        bool wasHovering = isHoveringLastJoint;
+        isHoveringLastJoint = false;
+
+        Ray ray = rayInteractor.Ray;
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            Debug.Log($"RaycastHit: {hit.collider.gameObject.name}");
+            if (hit.collider.gameObject == lastJoint)
+            {
+                isHoveringLastJoint = true;
+                Debug.Log("Hovering over LAST JOINT!");
+            }
+        }
+        else
+        {
+            Debug.Log("Raycast did not hit anything.");
+        }
+
+        // Hover color changes
+        if (!wasHovering && isHoveringLastJoint && !isDraggingTarget)
+        {
+            Debug.Log("Just started hovering lastJoint. Changing color to hoverColor.");
+            lastJointRenderer.material.color = hoverColor;
+        }
+        else if (wasHovering && !isHoveringLastJoint && !isDraggingTarget)
+        {
+            Debug.Log("Stopped hovering lastJoint. Reverting color to normalColor.");
+            lastJointRenderer.material.color = normalColor;
+        }
+
+        // Step 2: Handle “drag” input
+        if (!isDraggingTarget && isHoveringLastJoint && IsSelectButtonDown())
+        {
+            Debug.Log("Select button pressed while hovering lastJoint -> start dragging target.");
+            isDraggingTarget = true;
+        }
+
+        if (isDraggingTarget)
+        {
+            MoveTargetWithRay();
+
+            if (IsSelectButtonUp())
+            {
+                Debug.Log("Select button released -> stop dragging target.");
+                isDraggingTarget = false;
+                lastJointRenderer.material.color = normalColor;
+            }
+        }
+    }
+
+    private void MoveTargetWithRay()
+    {
+        // We pick a plane near the last joint, oriented by camera's forward
+        Plane plane = new Plane(Camera.main.transform.forward, lastJoint.transform.position);
+        Ray ray = rayInteractor.Ray;
+
+        if (plane.Raycast(ray, out float distance))
+        {
+            Vector3 newPosition = ray.GetPoint(distance);
+            Debug.Log($"Moving target to {newPosition}");
+            target.transform.position = newPosition;
+        }
+        else
+        {
+            Debug.LogWarning("Plane.Raycast failed: no intersection between ray and plane!");
+        }
+    }
+
+>>>>>>> Stashed changes
       private void VisualizeAngleBetweenLastTwoJoints(Vector3 direction1,Vector3 directiontwo)
     {
         // Asegúrate de que el currentJoint tiene asignado su JointProperties
