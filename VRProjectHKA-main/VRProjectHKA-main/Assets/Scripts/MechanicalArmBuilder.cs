@@ -48,11 +48,17 @@ public class MechanicalArmBuilder : MonoBehaviour
     private Text _title2;
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
     private bool isDraggingTarget = false;     // Are we currently dragging the target?
     private bool isHoveringLastJoint = false;  // Are we hovering over the last joint?
     private Renderer lastJointRenderer;        // Renderer for the last joint
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
     void Start()
@@ -81,8 +87,14 @@ public class MechanicalArmBuilder : MonoBehaviour
     public void EndArmCreationMode(){
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
         isCreationMode = false;
+=======
+        lastJoint = currentJoint;
+        isCreationMode = false;
+        lastJointRenderer = lastJoint.GetComponent<Renderer>();
+>>>>>>> Stashed changes
 =======
         lastJoint = currentJoint;
         isCreationMode = false;
@@ -183,6 +195,12 @@ public class MechanicalArmBuilder : MonoBehaviour
         
     }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+    else {
+        HandleLastJointHoverAndDrag();
+    }
+>>>>>>> Stashed changes
 =======
     else {
         HandleLastJointHoverAndDrag();
@@ -355,7 +373,10 @@ public class MechanicalArmBuilder : MonoBehaviour
         }
     }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 
     private void HandleLastJointHoverAndDrag()
     {
@@ -445,6 +466,9 @@ public class MechanicalArmBuilder : MonoBehaviour
         }
     }
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
       private void VisualizeAngleBetweenLastTwoJoints(Vector3 direction1,Vector3 directiontwo)
     {
