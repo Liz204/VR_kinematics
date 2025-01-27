@@ -282,18 +282,8 @@ public class MechanicalArmBuilder : MonoBehaviour
 
     private Ray GetPointerRay()
     {
-        // TODO VR: Replace this with VR controller's pointing direction when in VR mode
-        // For now, use mouse position ray
-        //return Camera.main.ScreenPointToRay(Input.mousePosition);
-        // Obtén la posición y dirección del rayo desde el controlador derecho
         // Crear un rayo basado en la posición y dirección del controlador
         return new Ray(Camera.main.transform.position, Camera.main.transform.forward);
-        // Obtener la posición y rotación del controlador derecho
-        //Vector3 controllerPosition = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
-        //Quaternion controllerRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
-
-        // Crear un rayo basado en la posición y dirección del controlador
-        //return new Ray(controllerPosition, controllerRotation * Vector3.forward);
     }
 
     private bool IsSelectButtonDown()
@@ -519,6 +509,8 @@ public class MechanicalArmBuilder : MonoBehaviour
     }
 
         // Nueva función para calcular y visualizar los ángulos
+
+
 public void UpdateJointAngles()
 {
 var currentGameObject =     firstJoint.transform;
