@@ -18,7 +18,7 @@ public class RotSphere : MonoBehaviour
                 // Establecer el cubo como padre de la esfera generada
                 spawnedSphere.transform.SetParent(transform);
 
-                Debug.Log("RotationSphere generada sobre el cubo.");
+                //Debug.Log("RotationSphere generada sobre el cubo.");
 
                 // Asignar el cubo a cada disco dentro de la esfera
                 foreach (Transform child in spawnedSphere.transform)
@@ -43,7 +43,7 @@ public class RotSphere : MonoBehaviour
             // Establecer el cubo como padre de la esfera generada
             spawnedSphere.transform.SetParent(transform);
 
-            Debug.Log("RotationSphere generada sobre el cubo.");
+            //Debug.Log("RotationSphere generada sobre el cubo.");
 
             // Asignar el cubo a cada disco dentro de la esfera
             foreach (Transform child in spawnedSphere.transform)
@@ -59,7 +59,7 @@ public class RotSphere : MonoBehaviour
         {
             // Si ya existe la esfera, destruirla
             Destroy(spawnedSphere);
-            Debug.Log("RotationSphere destruida.");
+            //Debug.Log("RotationSphere destruida.");
         }
     }
 }

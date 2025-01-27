@@ -9,22 +9,30 @@ public class RotationDisc : MonoBehaviour
     private bool isDragging = false; // Estado de arrastre
     public float rotationSpeed = 1000f; // Velocidad de rotación
 
-    void OnMouseDown()
+    private void Update()
     {
-        // Comienza a arrastrar el disco
-        isDragging = true;
-    }
+        // Lógica principal de interacción con VR
+        if (IsSelectButtonDown()) // Detecta si se ha presionado el botón del controlador
+        {
+            Ray pointerRay = GetPointerRay(); // Obtén el rayo del controlador
+            RaycastHit hit;
 
-    void OnMouseDrag()
-    {
+            // Comprueba si el rayo golpea este disco
+            if (Physics.Raycast(pointerRay, out hit))
+            {
+                if (hit.collider.gameObject == gameObject) // Verifica si el objeto tocado es este disco
+                {
+                    isDragging = true;
+                }
+            }
+        }
+
         if (isDragging && cube != null)
         {
-            // Movimiento del ratón en el eje X
-            float mouseX = Input.GetAxis("Mouse X");
+            // Detecta el movimiento del controlador
+            float rotationAmount = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).x * rotationSpeed * Time.deltaTime;
 
-            // Rotar el cubo mientras lo arrastras
-            float rotationAmount = mouseX * rotationSpeed * Time.deltaTime;
-
+            // Aplica la rotación en el eje seleccionado
             if (axisToRotate == Axis.X)
             {
                 cube.transform.Rotate(Vector3.right, -rotationAmount); // Dirección opuesta en X
@@ -38,11 +46,23 @@ public class RotationDisc : MonoBehaviour
                 cube.transform.Rotate(Vector3.forward, rotationAmount); // Sin cambio en Z
             }
         }
+
+        // Si el botón de selección ya no está presionado, deja de arrastrar
+        if (OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
+        {
+            isDragging = false;
+        }
     }
 
-    void OnMouseUp()
+    private Ray GetPointerRay()
     {
-        // Deja de arrastrar el disco
-        isDragging = false;
+        // Crear un rayo basado en la posición y dirección del controlador
+        return new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+    }
+
+    private bool IsSelectButtonDown()
+    {
+        // Verifica si el botón de selección está presionado
+        return OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger);
     }
 }

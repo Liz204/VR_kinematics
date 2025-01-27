@@ -56,7 +56,7 @@ public class MechanicalArmBuilder : MonoBehaviour
     {   
         if (rayInteractor == null)
         {
-            Debug.LogError("No se ha asignado un RayInteractor al script.");
+            //Debug.LogError("No se ha asignado un RayInteractor al script.");
         }
 
         bioIK = GetComponent<BioIK.BioIK>();
@@ -177,9 +177,10 @@ public class MechanicalArmBuilder : MonoBehaviour
     else {
         HandleLastJointHoverAndDrag();
     }
+    UpdateJointAngles();
     if(OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
         {
-            Debug.Log("yCLICKED");
+            //Debug.Log("yCLICKED");
             canva.SetActive(true);
             UpdateJointAngles();
           
@@ -284,6 +285,7 @@ public class MechanicalArmBuilder : MonoBehaviour
     {
         // Crear un rayo basado en la posición y dirección del controlador
         return new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+
     }
 
     private bool IsSelectButtonDown()
@@ -325,7 +327,7 @@ public class MechanicalArmBuilder : MonoBehaviour
             
             if (OVRInput.GetDown(OVRInput.Button.Four))
         {
-            Debug.Log("Botón trasero presionado");
+            //Debug.Log("Botón trasero presionado");
             UpdateJointAngles();
         }
         
@@ -339,17 +341,17 @@ public class MechanicalArmBuilder : MonoBehaviour
         
         if (lastJoint == null)
         {
-            Debug.LogWarning("Cannot drag last joint because lastJoint is NULL!");
+            //Debug.LogWarning("Cannot drag last joint because lastJoint is NULL!");
             return;
         }
         if (lastJointRenderer == null)
         {
-            Debug.LogWarning($"No renderer on {lastJoint.name}, cannot show hover color!");
+            //Debug.LogWarning($"No renderer on {lastJoint.name}, cannot show hover color!");
             return;
         }
         if (rayInteractor == null)
         {
-            Debug.LogWarning("No rayInteractor assigned, cannot raycast to last joint!");
+            //Debug.LogWarning("No rayInteractor assigned, cannot raycast to last joint!");
             return;
         }
 
@@ -360,34 +362,34 @@ public class MechanicalArmBuilder : MonoBehaviour
         Ray ray = rayInteractor.Ray;
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            Debug.Log($"RaycastHit: {hit.collider.gameObject.name}");
+            //Debug.Log($"RaycastHit: {hit.collider.gameObject.name}");
             if (hit.collider.gameObject == lastJoint)
             {
                 isHoveringLastJoint = true;
-                Debug.Log("Hovering over LAST JOINT!");
+                //Debug.Log("Hovering over LAST JOINT!");
             }
         }
         else
         {
-            Debug.Log("Raycast did not hit anything.");
+            //Debug.Log("Raycast did not hit anything.");
         }
 
         // Hover color changes
         if (!wasHovering && isHoveringLastJoint && !isDraggingTarget)
         {
-            Debug.Log("Just started hovering lastJoint. Changing color to hoverColor.");
+            //Debug.Log("Just started hovering lastJoint. Changing color to hoverColor.");
             lastJointRenderer.material.color = hoverColor;
         }
         else if (wasHovering && !isHoveringLastJoint && !isDraggingTarget)
         {
-            Debug.Log("Stopped hovering lastJoint. Reverting color to normalColor.");
+            //Debug.Log("Stopped hovering lastJoint. Reverting color to normalColor.");
             lastJointRenderer.material.color = normalColor;
         }
 
         // Step 2: Handle “drag” input
         if (!isDraggingTarget && isHoveringLastJoint && IsSelectButtonDown())
         {
-            Debug.Log("Select button pressed while hovering lastJoint -> start dragging target.");
+            //Debug.Log("Select button pressed while hovering lastJoint -> start dragging target.");
             isDraggingTarget = true;
         }
 
@@ -397,7 +399,7 @@ public class MechanicalArmBuilder : MonoBehaviour
 
             if (IsSelectButtonUp())
             {
-                Debug.Log("Select button released -> stop dragging target.");
+                //Debug.Log("Select button released -> stop dragging target.");
                 isDraggingTarget = false;
                 lastJointRenderer.material.color = normalColor;
             }
@@ -413,12 +415,12 @@ public class MechanicalArmBuilder : MonoBehaviour
         if (plane.Raycast(ray, out float distance))
         {
             Vector3 newPosition = ray.GetPoint(distance);
-            Debug.Log($"Moving target to {newPosition}");
+            //Debug.Log($"Moving target to {newPosition}");
             target.transform.position = newPosition;
         }
         else
         {
-            Debug.LogWarning("Plane.Raycast failed: no intersection between ray and plane!");
+            //Debug.LogWarning("Plane.Raycast failed: no intersection between ray and plane!");
         }
     }
 
@@ -464,71 +466,119 @@ public class MechanicalArmBuilder : MonoBehaviour
         //Debug.Log($"Angle between the last two joints: {angle:F2}°");
         _title.text = ( $"Angle: {angle:F2}°     ");
     }
-    private void VisualizeAngleDinamic(Transform firstJoint, Transform currentJoint,Transform lastJoint)
+    public void UpdateJointAngles()
+{
+    var currentGameObject = firstJoint.transform; // Comenzamos desde el primer joint
+    Transform lastGameObject = null; // No hay "último joint" al inicio
+    _title2.text = ""; // Limpiar texto previo
+
+    while (currentGameObject.childCount > 0) // Iterar por la jerarquía de joints
     {
-        // Asegúrate de que el currentJoint tiene asignado su JointProperties
+        Transform nextGameObject = currentGameObject.GetChild(0); // Siguiente joint en la jerarquía
+
+        if (lastGameObject != null)
+        {
+            // Visualiza el ángulo entre lastGameObject, currentGameObject y nextGameObject
+            float angle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
+
+            // Actualiza el texto con el ángulo calculado
+            _title2.text += _title.text;
+
+            ApplyRotationToAssociatedDiscs(currentGameObject,angle);
+
+        }
+
+        lastGameObject = currentGameObject; // El current ahora es el último
+        currentGameObject = nextGameObject; // Avanza al siguiente
+    }
+}
+
+// Función para calcular el ángulo y retornar el valor
+private float VisualizeAngleDinamic(Transform firstJoint, Transform currentJoint, Transform lastJoint)
+{
     JointProperties currentProperties = currentJoint.GetComponent<JointProperties>();
 
-        Transform joint1 = firstJoint;
-        Transform joint2 = currentJoint;
-        Transform joint3 = lastJoint;
+    Transform joint1 = firstJoint;
+    Transform joint2 = currentJoint;
+    Transform joint3 = lastJoint;
 
- if (joint1== null || joint3 == null)
+    if (joint1 == null || joint3 == null)
     {
         Debug.LogWarning("No hay suficientes joints conectados para calcular el ángulo.");
-        return;
+        return 0f;
     }
 
-        Vector3 direction1 = joint2.position - joint1.position;
+    // Direcciones entre los joints
+    Vector3 direction1 = joint2.position - joint1.position;
+    Vector3 direction2 = joint3.position - joint2.position;
 
-        Vector3 directiontwo = joint3.position - joint2.position;
-        float angle = Vector3.Angle(direction1, directiontwo);
-        Debug.Log(direction1);
-        Debug.Log(directiontwo);
-        Debug.Log(joint1.transform.position);
+    // Cálculo del ángulo entre direcciones
+    float angle = Vector3.Angle(direction1, direction2);
+    //Debug.Log($"Ángulo calculado: {angle:F2}°");
 
-        /*GameObject angleVisualizer = Instantiate(circlePrefab);
-        angleVisualizer.transform.position = joint2.transform.position;
-        angleVisualizer.transform.localScale = new Vector3(1f, 0.05f, 1f); // Adjust scale as needed
-        angleVisualizer.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
-
-        // Update the text on the circle prefab
-        TextMeshPro textMesh = angleVisualizer.GetComponentInChildren<TextMeshPro>();
-        // Busca el componente TextMeshPro en el hijo llamado "Text (TMP)"
-        //TextMeshPro textMesh = angleVisualizer.transform.Find("Text (TMP)")?.GetComponent<TextMeshPro>();
-        textMesh.text = $"Angle: {angle:F2}°";
-        Debug.Log($"TextMesh updated: {textMesh.text}");
-        if (textMesh != null)
-        {
-            textMesh.text = $"Angle: {angle:F2}°";
-            Debug.Log($"TextMesh updated: {textMesh.text}");
-        }*/
-
-        Debug.Log($"Angle is: {angle:F2}°");
-        _title.text = ( $"Angle: {angle:F2}°     ");
-    }
-
-        // Nueva función para calcular y visualizar los ángulos
-
-
-public void UpdateJointAngles()
-{
-var currentGameObject =     firstJoint.transform;
-Transform lastGameObject = null;
-_title2.text = "";
-while (currentGameObject.childCount > 0)
-{
-    Transform nextGameObject = currentGameObject.GetChild(0);
-
-    if (lastGameObject != null)
-    {
-        VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
-        _title2.text = (_title2.text+_title.text);
-    }
-
-    lastGameObject = currentGameObject;
-    currentGameObject = nextGameObject;
+    // Actualizar la visualización del ángulo
+    _title.text = $"Angle: {angle:F2}°     ";
+    return angle;
 }
-} 
+
+// Función para aplicar la rotación a los discos asociados
+private void ApplyRotationToAssociatedDiscs(Transform joint, float angle)
+{
+    // Encuentra todos los discos asociados al joint
+    RotationDisc[] discs = joint.GetComponentsInChildren<RotationDisc>();
+
+    foreach (var disc in discs)
+    {
+        Debug.Log("Discsfound");
+        // Aplica la rotación dependiendo del eje del disco
+        ApplyColorBasedOnAxis(disc, angle);
+    }
+}
+
+// Función para aplicar rotación basada en el ángulo
+private void ApplyRotationFromAngle(RotationDisc disc, float angle)
+{
+    if (disc.cube == null) return; // Asegúrate de que hay un cubo asociado
+
+    float rotationAmount = angle * disc.rotationSpeed * Time.deltaTime; // Calcula cuánto rotar
+
+    // Aplica la rotación según el eje seleccionado en el disco
+    if (disc.axisToRotate == RotationDisc.Axis.X)
+    {
+        disc.cube.transform.Rotate(Vector3.right, -rotationAmount);
+    }
+    else if (disc.axisToRotate == RotationDisc.Axis.Y)
+    {
+        disc.cube.transform.Rotate(Vector3.up, -rotationAmount);
+    }
+    else if (disc.axisToRotate == RotationDisc.Axis.Z)
+    {
+        disc.cube.transform.Rotate(Vector3.forward, rotationAmount);
+    }
+}
+
+// Función para aplicar color a los discos en función del eje
+private void ApplyColorBasedOnAxis(RotationDisc disc, float angle)
+{
+if (disc.cube == null) return; // Asegúrate de que hay un cubo asociado
+// Cambiar el color del disco según el eje
+Renderer discRenderer = disc.GetComponent<Renderer>();
+if (discRenderer != null)
+{
+    if (disc.axisToRotate == RotationDisc.Axis.X)
+    {
+        discRenderer.material.color = Color.red; // Eje X (rojo)
+    }
+    else if (disc.axisToRotate == RotationDisc.Axis.Y)
+    {
+        discRenderer.material.color = Color.green; // Eje Y (verde)
+    }
+    else if (disc.axisToRotate == RotationDisc.Axis.Z)
+    {
+        discRenderer.material.color = Color.blue; // Eje Z (azul)
+    }
+}
+}
+
 
 }
