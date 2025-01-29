@@ -51,6 +51,8 @@ public class MechanicalArmBuilder : MonoBehaviour
     private bool isHoveringLastJoint = false;  // Are we hovering over the last joint?
     private Renderer lastJointRenderer;        // Renderer for the last joint
 
+    private Dictionary<Transform, float> previousAngles = new Dictionary<Transform, float>();
+
 
     void Start()
     {   
@@ -466,75 +468,115 @@ public class MechanicalArmBuilder : MonoBehaviour
         //Debug.Log($"Angle between the last two joints: {angle:F2}°");
         _title.text = ( $"Angle: {angle:F2}°     ");
     }
-    public void UpdateJointAngles()
-{
-    var currentGameObject = firstJoint.transform; // Comenzamos desde el primer joint
-    Transform lastGameObject = null; // No hay "último joint" al inicio
-    _title2.text = ""; // Limpiar texto previo
 
-    while (currentGameObject.childCount > 0) // Iterar por la jerarquía de joints
+
+public void UpdateJointAngles()
+{
+    var currentGameObject = firstJoint.transform;
+    Transform lastGameObject = null;
+    _title2.text = ""; // Limpiar el texto previo
+
+    while (currentGameObject.childCount > 0)
     {
-        Transform nextGameObject = currentGameObject.GetChild(0); // Siguiente joint en la jerarquía
+        Transform nextGameObject = currentGameObject.GetChild(0);
 
         if (lastGameObject != null)
         {
-            // Visualiza el ángulo entre lastGameObject, currentGameObject y nextGameObject
-            float angle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
+            float newAngle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
 
-            // Actualiza el texto con el ángulo calculado
-            _title2.text += _title.text;
+            // Si es la primera iteración, solo guarda el ángulo y no calcula diferencia
+            if (!previousAngles.ContainsKey(currentGameObject))
+            {
+                previousAngles[currentGameObject] = newAngle;
+            }
+            else
+            {
+                // Obtener el ángulo previo
+                float previousAngle = previousAngles[currentGameObject];
 
-            ApplyRotationToAssociatedDiscs(currentGameObject,angle);
+                // Calcular diferencia
+                float angleDifference = newAngle - previousAngle;
 
+                // Guardar nuevo ángulo en el diccionario
+                previousAngles[currentGameObject] = newAngle;
+
+                // Mostrar el ángulo absoluto en el texto
+                _title2.text += $"Angle: {newAngle:F2}°\n";
+
+                // Aplicar color solo si la diferencia es significativa, si no, restaurar a gris
+                ApplyRotationToAssociatedDiscs(currentGameObject, angleDifference);
+            }
+        }
+        else
+        {
+            // Primera iteración: solo guardar el ángulo
+            previousAngles[currentGameObject] = 0f;
         }
 
-        lastGameObject = currentGameObject; // El current ahora es el último
-        currentGameObject = nextGameObject; // Avanza al siguiente
+        lastGameObject = currentGameObject;
+        currentGameObject = nextGameObject;
     }
 }
 
 // Función para calcular el ángulo y retornar el valor
 private float VisualizeAngleDinamic(Transform firstJoint, Transform currentJoint, Transform lastJoint)
 {
-    JointProperties currentProperties = currentJoint.GetComponent<JointProperties>();
+    if (firstJoint == null || lastJoint == null) return 0f;
 
-    Transform joint1 = firstJoint;
-    Transform joint2 = currentJoint;
-    Transform joint3 = lastJoint;
+    Vector3 direction1 = currentJoint.position - firstJoint.position;
+    Vector3 direction2 = lastJoint.position - currentJoint.position;
 
-    if (joint1 == null || joint3 == null)
-    {
-        Debug.LogWarning("No hay suficientes joints conectados para calcular el ángulo.");
-        return 0f;
-    }
-
-    // Direcciones entre los joints
-    Vector3 direction1 = joint2.position - joint1.position;
-    Vector3 direction2 = joint3.position - joint2.position;
-
-    // Cálculo del ángulo entre direcciones
     float angle = Vector3.Angle(direction1, direction2);
-    //Debug.Log($"Ángulo calculado: {angle:F2}°");
-
-    // Actualizar la visualización del ángulo
-    _title.text = $"Angle: {angle:F2}°     ";
     return angle;
 }
 
-// Función para aplicar la rotación a los discos asociados
-private void ApplyRotationToAssociatedDiscs(Transform joint, float angle)
+// Función para iluminar el disco si hay cambio, o restaurarlo a gris si no
+private void ApplyRotationToAssociatedDiscs(Transform joint, float angleDifference)
 {
-    // Encuentra todos los discos asociados al joint
     RotationDisc[] discs = joint.GetComponentsInChildren<RotationDisc>();
 
     foreach (var disc in discs)
     {
-        Debug.Log("Discsfound");
-        // Aplica la rotación dependiendo del eje del disco
-        ApplyColorBasedOnAxis(disc, angle);
+        Renderer discRenderer = disc.GetComponent<Renderer>();
+        if (discRenderer == null) continue;
+
+        // Si la diferencia es menor a 0.1°, restaurar a gris
+        if (Mathf.Abs(angleDifference) < 0.1f)
+        {
+            discRenderer.material.color = Color.gray;
+        }
+        else
+        {
+            // Aplicar color según el eje
+            ApplyColorBasedOnAxis(disc,angleDifference);
+        }
     }
 }
 
+private void ApplyColorBasedOnAxis(RotationDisc disc, float angle)
+{
+    if (disc.cube == null) return;
+
+    Renderer discRenderer = disc.GetComponent<Renderer>();
+    if (discRenderer != null)
+    {
+        switch (disc.axisToRotate)
+        {
+            case RotationDisc.Axis.X:
+                discRenderer.material.color = Color.red;
+                break;
+            case RotationDisc.Axis.Y:
+                discRenderer.material.color = Color.green;
+                break;
+            case RotationDisc.Axis.Z:
+                discRenderer.material.color = Color.blue;
+                break;
+            default:
+                Debug.LogWarning("Eje de rotación desconocido: " + disc.axisToRotate);
+                break;
+        }
+    }
+}
 // Función para aplicar rotación basada en el ángulo
 private void ApplyRotationFromAngle(RotationDisc disc, float angle)
 {
@@ -557,28 +599,6 @@ private void ApplyRotationFromAngle(RotationDisc disc, float angle)
     }
 }
 
-// Función para aplicar color a los discos en función del eje
-private void ApplyColorBasedOnAxis(RotationDisc disc, float angle)
-{
-if (disc.cube == null) return; // Asegúrate de que hay un cubo asociado
-// Cambiar el color del disco según el eje
-Renderer discRenderer = disc.GetComponent<Renderer>();
-if (discRenderer != null)
-{
-    if (disc.axisToRotate == RotationDisc.Axis.X)
-    {
-        discRenderer.material.color = Color.red; // Eje X (rojo)
-    }
-    else if (disc.axisToRotate == RotationDisc.Axis.Y)
-    {
-        discRenderer.material.color = Color.green; // Eje Y (verde)
-    }
-    else if (disc.axisToRotate == RotationDisc.Axis.Z)
-    {
-        discRenderer.material.color = Color.blue; // Eje Z (azul)
-    }
-}
-}
 
 
 }

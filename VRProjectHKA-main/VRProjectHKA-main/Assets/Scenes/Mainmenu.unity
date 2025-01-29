@@ -13827,7 +13827,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60f371ad03555784bb24e22b232fc28c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rayInteractor: {fileID: 0}
+  rayInteractor: {fileID: 1055244592}
   CubeObject: {fileID: 1074149606}
   normalColor: {r: 0.5388679, g: 0.6415094, b: 0.53459114, a: 1}
   selectableColor: {r: 0, g: 1, b: 0, a: 1}
@@ -16327,7 +16327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60f371ad03555784bb24e22b232fc28c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rayInteractor: {fileID: 0}
+  rayInteractor: {fileID: 1055244592}
   CubeObject: {fileID: 1216153547}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   selectableColor: {r: 0, g: 1, b: 0, a: 1}
@@ -20254,7 +20254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60f371ad03555784bb24e22b232fc28c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rayInteractor: {fileID: 0}
+  rayInteractor: {fileID: 1055244592}
   CubeObject: {fileID: 1481157693}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   selectableColor: {r: 0, g: 1, b: 0, a: 1}
