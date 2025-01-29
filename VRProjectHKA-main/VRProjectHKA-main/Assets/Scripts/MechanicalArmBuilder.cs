@@ -33,7 +33,7 @@ public class MechanicalArmBuilder : MonoBehaviour
     private bool isHovering = false;        // Is the pointer hovering over the joint?
     public Button endArmCreationButton;
     public GameObject target;
-    public GameObject canva;
+    //public GameObject canva;
 
     private BioIK.BioIK bioIK;
 
@@ -124,7 +124,7 @@ public class MechanicalArmBuilder : MonoBehaviour
             currentSegment.AddObjective(ObjectiveType.Position);
             Position objective = (Position)currentSegment.Objectives[0];
             objective.SetTargetTransform(target.transform);
-            canva.SetActive(false);
+            //canva.SetActive(false);
 
         }
     }
@@ -181,7 +181,7 @@ public class MechanicalArmBuilder : MonoBehaviour
     if(OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
         {
             //Debug.Log("yCLICKED");
-            canva.SetActive(true);
+            //canva.SetActive(true);
             UpdateJointAngles();
           
         }
