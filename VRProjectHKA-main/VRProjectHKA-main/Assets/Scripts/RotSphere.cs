@@ -18,20 +18,26 @@ public class RotSphere : MonoBehaviour
                 // Establecer el cubo como padre de la esfera generada
                 spawnedSphere.transform.SetParent(transform);
 
-                //Debug.Log("RotationSphere generada sobre el cubo.");
+                // Asignar el cubo a cada disco dentro de la esfera, excepto el último
+                int childCount = spawnedSphere.transform.childCount;
+                int index = 0;
 
-                // Asignar el cubo a cada disco dentro de la esfera
                 foreach (Transform child in spawnedSphere.transform)
                 {
-                    RotationDisc discScript = child.GetComponent<RotationDisc>();
-                    if (discScript != null)
+                    if (index < childCount - 1) // Evita el último hijo
                     {
-                        discScript.cube = gameObject; // Asignamos el cubo automáticamente (el cubo es 'gameObject')
+                        RotationDisc discScript = child.GetComponent<RotationDisc>();
+                        if (discScript != null)
+                        {
+                            discScript.cube = gameObject; // Asignamos el cubo automáticamente
+                        }
                     }
+                    index++;
                 }
             }
         }
     }
+
 
     void OnMouseDown()
     {

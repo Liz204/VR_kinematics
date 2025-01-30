@@ -174,12 +174,20 @@ public class MechanicalArmBuilder : MonoBehaviour
         }
         //Debug.Log("UPDATE");
         //UpdateJointAngles();
+
         
     }
     else {
+        RemoveDiscsFromJoint(lastJoint.transform);
         HandleLastJointHoverAndDrag();
+        if (IsSelectButtonUp())
+    {
+        MoveTargetWithRay();
+    }
     }
     UpdateJointAngles();
+
+    
     if(OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
         {
             //Debug.Log("yCLICKED");
@@ -417,12 +425,12 @@ public class MechanicalArmBuilder : MonoBehaviour
         if (plane.Raycast(ray, out float distance))
         {
             Vector3 newPosition = ray.GetPoint(distance);
-            //Debug.Log($"Moving target to {newPosition}");
+            Debug.Log($"Moving target to {newPosition}");
             target.transform.position = newPosition;
         }
         else
         {
-            //Debug.LogWarning("Plane.Raycast failed: no intersection between ray and plane!");
+            Debug.LogWarning("Plane.Raycast failed: no intersection between ray and plane!");
         }
     }
 
@@ -599,6 +607,17 @@ private void ApplyRotationFromAngle(RotationDisc disc, float angle)
     }
 }
 
+private void RemoveDiscsFromJoint(Transform joint)
+{
+    // Obtener todos los RotationDisc dentro de la joint
+    RotationDisc[] discs = joint.GetComponentsInChildren<RotationDisc>();
+
+    // Eliminar cada disco encontrado
+    foreach (var disc in discs)
+    {
+        Destroy(disc.gameObject);
+    }
+}
 
 
 }
