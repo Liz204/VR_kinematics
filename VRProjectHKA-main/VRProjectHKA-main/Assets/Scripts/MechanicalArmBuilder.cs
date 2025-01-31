@@ -502,7 +502,7 @@ public void UpdateJointAngles()
                 // Obtener el ángulo previo
                 float previousAngle = previousAngles[currentGameObject];
 
-                // Calcular diferencia
+                // Calcular diferencia de angulos
                 float angleDifference = newAngle - previousAngle;
 
                 // Guardar nuevo ángulo en el diccionario de angulos
