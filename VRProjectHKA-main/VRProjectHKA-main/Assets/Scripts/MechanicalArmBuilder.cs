@@ -505,7 +505,7 @@ public void UpdateJointAngles()
                 // Calcular diferencia
                 float angleDifference = newAngle - previousAngle;
 
-                // Guardar nuevo ángulo en el diccionario
+                // Guardar nuevo ángulo en el diccionario de angulos
                 previousAngles[currentGameObject] = newAngle;
 
                 // Mostrar el ángulo absoluto en el texto
