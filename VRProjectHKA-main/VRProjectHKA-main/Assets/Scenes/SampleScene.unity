@@ -9764,8 +9764,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5164535e647cbff449361d5ea1a79e6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image1: {fileID: 1341906637}
-  image2: {fileID: 602513172}
+  images:
+  - {fileID: 1341906637}
+  - {fileID: 602513172}
   targetSize: {x: 300, y: 300}
 --- !u!1 &918048317
 GameObject:
