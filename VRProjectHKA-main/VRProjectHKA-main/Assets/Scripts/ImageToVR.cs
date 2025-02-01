@@ -3,36 +3,70 @@ using UnityEngine.UI;
 
 public class ImageToVR : MonoBehaviour
 {
-    public Image vrImage;
-    public Vector2 targetSize = new Vector2(300, 300);
+    public Image image1;
+    public Image image2;
+
+    public Vector2 targetSize = new Vector2(300, 300); // Size of the images
     
-    // Variable para llevar el control del estado actual de la imagen
-    private bool imageVisible = false;
+    // 0 = none, 1 = image1, 2 = image2.
+    private int state = 0;
 
     void Start()
     {
-        if (vrImage != null)
+        // Configuramos el tamaño y ocultamos ambas imágenes inicialmente
+        if (image1 != null)
         {
-            // Ajusta el tamaño del RectTransform según targetSize
-            vrImage.rectTransform.sizeDelta = targetSize;
-            // Inicialmente la imagen estará oculta
-            vrImage.enabled = imageVisible;
+            image1.rectTransform.sizeDelta = targetSize;
+            image1.enabled = false;
         }
         else
         {
-            Debug.LogWarning("No se asignó la imagen (vrImage) en el Inspector.");
+            Debug.LogWarning("No se asignó la imagen1 en el Inspector.");
+        }
+
+        if (image2 != null)
+        {
+            image2.rectTransform.sizeDelta = targetSize;
+            image2.enabled = false;
+        }
+        else
+        {
+            Debug.LogWarning("No se asignó la imagen2 en el Inspector.");
         }
     }
 
     void Update()
     {
-        // Detecta la pulsación del botón B del controlador derecho
+        // Al presionar el botón B del controlador derecho (OVRInput.Button.Two)
         if (OVRInput.GetDown(OVRInput.Button.Two))
         {
-            // Alterna el estado de visibilidad
-            imageVisible = !imageVisible;
-            vrImage.enabled = imageVisible;
-            Debug.Log("Estado de la imagen: " + (imageVisible ? "Visible" : "Oculta"));
+            // Incrementa el estado de forma cíclica (0 -> 1 -> 2 -> 0 ...)
+            state = (state + 1) % 3;
+            ActualizarVisibilidad();
+            Debug.Log("Estado actual: " + state);
+        }
+    }
+    
+    // Función que actualiza la visibilidad de las imágenes según el estado
+    void ActualizarVisibilidad()
+    {
+        if (state == 0)
+        {
+            // Ninguna imagen visible
+            if (image1 != null) image1.enabled = false;
+            if (image2 != null) image2.enabled = false;
+        }
+        else if (state == 1)
+        {
+            // Se muestra la imagen 1 y se oculta la imagen 2
+            if (image1 != null) image1.enabled = true;
+            if (image2 != null) image2.enabled = false;
+        }
+        else if (state == 2)
+        {
+            // Se oculta la imagen 1 y se muestra la imagen 2
+            if (image1 != null) image1.enabled = false;
+            if (image2 != null) image2.enabled = true;
         }
     }
 }
