@@ -478,26 +478,6 @@ public void UpdateJointAngles()
     {
         currentGameObject = joints[i]; 
 
-        // Buscar el hijo "RotationSphere"
-        Transform rotationSphere = currentGameObject.Find("RotationSphere(Clone)");
-        if (rotationSphere != null)
-        {
-            // Buscar el "Canva" dentro de RotationSphere
-            Transform canva = rotationSphere.Find("Canvas");
-            if (canva != null)
-            {
-                // Buscar el componente TextMeshProUGUI dentro de "Canva"
-                TextMeshProUGUI textComponent = canva.GetComponentInChildren<TextMeshProUGUI>();
-                if (textComponent != null)
-                {
-                    textComponent.text = $"Hola";
-                    // Obtener el ángulo calculado entre los joints
-                    //float angle = VisualizeAngleDinamic(lastGameObject, currentGameObject, rotationSphere);
-                    //textComponent.text = $"{angle:F0}°"; // Mostrar el ángulo en el TextMeshProUGUI del joint
-                }
-            }
-        }
-
         Transform nextGameObject = (i + 1 < joints.Count-2) ? joints[i + 1] : null;
         
         // Este if evita que se cuente al primer joint
@@ -513,6 +493,27 @@ public void UpdateJointAngles()
     }
 
     _title2.text = resultText; // Mostrar los resultados al final
+
+    int angleindex = 0;
+    for (int i = 1; i < joints.Count-2; i++)
+    {
+        Transform rotationSphere = joints[i].Find("RotationSphere(Clone)");
+        if (rotationSphere != null)
+        {
+            Transform canva = rotationSphere.Find("Canvas");
+            if (canva != null)
+            {
+                TextMeshProUGUI textComponent = canva.GetComponentInChildren<TextMeshProUGUI>();
+                if (textComponent != null)
+                {
+                    // Obtener el ángulo calculado entre los joints
+                    float angle = VisualizeAngleDinamic(lastGameObject, currentGameObject, rotationSphere);
+                    textComponent.text = $"{angles[angleindex]:f0}°"; // Mostrar el ángulo en el TextMeshProUGUI del joint
+                    angleindex++;
+                }
+            }
+        }
+    }
 }
 
 
