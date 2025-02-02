@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using BioIK;
 using Oculus.Interaction;
+using TMPro;
+
 
 public class MechanicalArmBuilder : MonoBehaviour
 {
@@ -460,6 +462,7 @@ public void UpdateJointAngles()
 {
     var currentGameObject = firstJoint.transform;
     Transform lastGameObject = null;
+    List<float> angles = new List<float>();
     string resultText = ""; // Almacenar los textos antes de mostrarlos
     List<Transform> joints = new List<Transform>();
 
@@ -479,7 +482,9 @@ public void UpdateJointAngles()
         // Este if evita que se cuente al primer joint
         if (lastGameObject != null && nextGameObject != null)
         {
+            // Obtenemos el angulo
             float angle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
+            angles.Add(angle);
             resultText += $"{i}: {angle:F0}°\n";
         }
 

@@ -5,23 +5,15 @@ public class UpdateAngleText : MonoBehaviour
 {
     private TextMeshProUGUI title2;  // Referencia automática al TextMeshPro
     private Transform cameraTransform; // Referencia automática a la cámara principal
-    private MechanicalArmBuilder armBuilder;
 
     void Start()
     {
         title2 = GetComponent<TextMeshProUGUI>();
-        armBuilder = FindObjectOfType<MechanicalArmBuilder>();
-
         cameraTransform = Camera.main?.transform;
     }
 
     void Update()
     {
-        if (armBuilder != null)
-        {
-            title2.text = $"{armBuilder.newAngle:F0}°";
-        }
-
         if (cameraTransform != null)
         {
             transform.LookAt(cameraTransform);
