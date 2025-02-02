@@ -137,8 +137,6 @@ public class MechanicalArmBuilder : MonoBehaviour
             Debug.LogError(bioIK.Root);
         }
 
-
-        
         if(isCreationMode){
             if (isDragging && newJoint != null){
                 // Update the position of the new joint based on pointer position on the interaction plane
@@ -179,10 +177,7 @@ public class MechanicalArmBuilder : MonoBehaviour
             if (IsSelectButtonUp()){
                 MoveTargetWithRay();
             }
-            if(OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
-            {
-                UpdateJointAngles();
-            }
+            UpdateJointAngles();
         }
     
 
@@ -319,19 +314,12 @@ public class MechanicalArmBuilder : MonoBehaviour
 
 
             // Trigger angle visualization on a specific key or VR input
-        if ( direction2!= Vector3.zero)
-        {
-            //Debug.Log("Button Four Pressed");
-            VisualizeAngleBetweenLastTwoJoints(direction,direction2);
-
-          
-        if (OVRInput.GetDown(OVRInput.Button.Four))
-        {
-            //Debug.Log("Botón trasero presionado");
-            //UpdateJointAngles();
-        }
-        
-        }
+            if ( direction2!= Vector3.zero)
+            {
+                //Debug.Log("Button Four Pressed");
+                VisualizeAngleBetweenLastTwoJoints(direction,direction2);
+            
+            }
             direction2 = direction;
         }
     }
@@ -467,58 +455,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         //_title.text = ( $"Angle 2: {angle:F2}°     ");
     }
 
-/*
-    public void UpdateJointAngles()
-    {
-        var currentGameObject = firstJoint.transform;
-        Transform lastGameObject = null;
-        _title2.text = ""; // Limpiar el texto previo
-        int jointIndex = 1; // Contador de joints
 
-        while (currentGameObject != null)
-        {
-            Transform nextGameObject = (currentGameObject.childCount > 0) ? currentGameObject.GetChild(0) : null;
-
-            if (lastGameObject != null)
-            {
-                newAngle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
-
-                // Si es la primera iteración, solo guarda el ángulo y no calcula diferencia
-                if (!previousAngles.ContainsKey(currentGameObject))
-                {
-                    previousAngles[currentGameObject] = newAngle;
-                }
-                else
-                {
-                    // Obtener el ángulo previo
-                    float previousAngle = previousAngles[currentGameObject];
-
-                    // Calcular diferencia de angulos
-                    float angleDifference = newAngle - previousAngle;
-
-                    // Guardar nuevo ángulo en el diccionario de angulos
-                    previousAngles[currentGameObject] = newAngle;
-
-                    // Aplicar color solo si la diferencia es significativa, si no, restaurar a gris
-                    ApplyRotationToAssociatedDiscs(currentGameObject, angleDifference);
-                }
-                _title2.text += $"{jointIndex}: {newAngle:F2}°\n";
-            }
-            else
-            {
-                // First Joint
-                previousAngles[currentGameObject] = 0f;
-                _title2.text += $"{jointIndex}: First Joint°\n";
-            }
-
-            lastGameObject = currentGameObject;
-            currentGameObject = nextGameObject;
-            jointIndex++;
-
-            if (currentGameObject.childCount == 0) break;
-        }
-    }
-*/
 public void UpdateJointAngles()
 {
     var currentGameObject = firstJoint.transform;
@@ -534,16 +471,16 @@ public void UpdateJointAngles()
     }
 
     // Calcular y mostrar los ángulos, excluyendo los últimos 2 joints y el del final
-    for (int i = 0; i < joints.Count - 3; i++)
+    for (int i = 0; i < joints.Count; i++)
     {
         currentGameObject = joints[i]; 
-        Transform nextGameObject = (i + 1 < joints.Count) ? joints[i + 1] : null;
+        Transform nextGameObject = (i + 1 < joints.Count-2) ? joints[i + 1] : null;
         
         // Este if evita que se cuente al primer joint
         if (lastGameObject != null && nextGameObject != null)
         {
             float angle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
-            resultText += $"{i + 1}: {angle:F2}°\n";
+            resultText += $"{i}: {angle:F2}°\n";
         }
 
         lastGameObject = currentGameObject;
