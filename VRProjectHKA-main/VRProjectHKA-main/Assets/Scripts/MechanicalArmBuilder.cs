@@ -53,6 +53,8 @@ public class MechanicalArmBuilder : MonoBehaviour
 
     private Dictionary<Transform, float> previousAngles = new Dictionary<Transform, float>();
 
+    public float newAngle = 00;
+
 
     void Start()
     {   
@@ -490,7 +492,7 @@ public void UpdateJointAngles()
 
         if (lastGameObject != null)
         {
-            float newAngle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
+            newAngle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
 
             // Si es la primera iteración, solo guarda el ángulo y no calcula diferencia
             if (!previousAngles.ContainsKey(currentGameObject))
