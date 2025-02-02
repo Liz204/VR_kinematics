@@ -19,7 +19,7 @@ public class UpdateAngleText : MonoBehaviour
     {
         if (armBuilder != null)
         {
-            title2.text = $"{armBuilder.newAngle:F2}°";
+            title2.text = $"{armBuilder.newAngle:F0}°";
         }
 
         if (cameraTransform != null)

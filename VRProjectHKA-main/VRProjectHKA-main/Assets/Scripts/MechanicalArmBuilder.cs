@@ -480,7 +480,7 @@ public void UpdateJointAngles()
         if (lastGameObject != null && nextGameObject != null)
         {
             float angle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
-            resultText += $"{i}: {angle:F2}°\n";
+            resultText += $"{i}: {angle:F0}°\n";
         }
 
         lastGameObject = currentGameObject;
