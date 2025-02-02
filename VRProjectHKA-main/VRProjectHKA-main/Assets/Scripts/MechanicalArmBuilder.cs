@@ -116,7 +116,6 @@ public class MechanicalArmBuilder : MonoBehaviour
                         Transform NextJoint= null;
                         NextJoint= currentGameObject.GetChild(0);
                         Transform PreviousJoint= lastGameObject;
-                        //VisualizeAngleDinamic(PreviousJoint, currentGameObject, NextJoint);
                     }
                     
                 }
@@ -124,7 +123,6 @@ public class MechanicalArmBuilder : MonoBehaviour
                 lastGameObject = currentGameObject;
             }
             
-            UpdateJointAngles();
             currentSegment.AddObjective(ObjectiveType.Position);
             Position objective = (Position)currentSegment.Objectives[0];
             objective.SetTargetTransform(target.transform);
@@ -138,66 +136,56 @@ public class MechanicalArmBuilder : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.M)){
             Debug.LogError(bioIK.Root);
         }
+
+
         
         if(isCreationMode){
-        if (isDragging && newJoint != null)
-        {
-            // Update the position of the new joint based on pointer position on the interaction plane
-            Vector3 targetPosition = GetPointerPositionOnInteractionPlane();
-            newJoint.transform.position = targetPosition;
+            if (isDragging && newJoint != null){
+                // Update the position of the new joint based on pointer position on the interaction plane
+                Vector3 targetPosition = GetPointerPositionOnInteractionPlane();
+                newJoint.transform.position = targetPosition;
 
-            // Update arm segment to connect currentJoint and newJoint
-            UpdateArmSegment();
+                // Update arm segment to connect currentJoint and newJoint
+                UpdateArmSegment();
+            }
+
+            // Check for pointer hover to change color
+            HandlePointerHover();
+
+            // Check for input to select or create a joint
+            if (IsSelectButtonDown() && !isDragging && isHovering){
+                CreateNewJoint();
+            }
+
+            // Release the new joint if the select button is released
+            if (IsSelectButtonUp() && isDragging){
+                isDragging = false;
+                currentJointRenderer.material.color = normalColor; // Reset the color of the current joint
+                lastJoint = currentJoint;
+                currentJoint = newJoint;  // Make the new joint the current joint for the next segment
+                currentJointRenderer = currentJoint.GetComponent<Renderer>();
+                currentJointRenderer.material.color = selectableColor; // Set the color back to selectable
+                newJoint = null;
+            }
+
+            // End Creation Mode
+            if(!isDragging && OVRInput.GetDown(OVRInput.Button.One)){
+                EndArmCreationMode();
+            }
         }
-
-        // Check for pointer hover to change color
-        HandlePointerHover();
-
-        // Check for input to select or create a joint
-        if (IsSelectButtonDown() && !isDragging && isHovering)
-        {
-            CreateNewJoint();
-        }
-
-        // Release the new joint if the select button is released
-        if (IsSelectButtonUp() && isDragging)
-        {
-            isDragging = false;
-            currentJointRenderer.material.color = normalColor; // Reset the color of the current joint
-            lastJoint = currentJoint;
-            currentJoint = newJoint;  // Make the new joint the current joint for the next segment
-            currentJointRenderer = currentJoint.GetComponent<Renderer>();
-            currentJointRenderer.material.color = selectableColor; // Set the color back to selectable
-            newJoint = null;
-        }
-        if(!isDragging && OVRInput.GetDown(OVRInput.Button.One))
-        {
-            EndArmCreationMode();
-        }
-        //Debug.Log("UPDATE");
-        //UpdateJointAngles();
-
-        
-    }
-    else {
-        RemoveDiscsFromJoint(lastJoint.transform);
-        HandleLastJointHoverAndDrag();
-        if (IsSelectButtonUp())
-    {
-        MoveTargetWithRay();
-    }
-    }
-    UpdateJointAngles();
-
-    
-    if(OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
-        {
-            //Debug.Log("yCLICKED");
-            //canva.SetActive(true);
-            UpdateJointAngles();
-          
+        else {
+            RemoveDiscsFromJoint(lastJoint.transform);
+            HandleLastJointHoverAndDrag();
+            if (IsSelectButtonUp()){
+                MoveTargetWithRay();
+            }
+            if(OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
+            {
+                UpdateJointAngles();
+            }
         }
     
+
     }
 
     private void HandlePointerHover()
@@ -336,11 +324,11 @@ public class MechanicalArmBuilder : MonoBehaviour
             //Debug.Log("Button Four Pressed");
             VisualizeAngleBetweenLastTwoJoints(direction,direction2);
 
-            
-            if (OVRInput.GetDown(OVRInput.Button.Four))
+          
+        if (OVRInput.GetDown(OVRInput.Button.Four))
         {
             //Debug.Log("Botón trasero presionado");
-            UpdateJointAngles();
+            //UpdateJointAngles();
         }
         
         }
@@ -476,57 +464,95 @@ public class MechanicalArmBuilder : MonoBehaviour
         }*/
 
         //Debug.Log($"Angle between the last two joints: {angle:F2}°");
-        _title.text = ( $"Angle: {angle:F2}°     ");
+        //_title.text = ( $"Angle 2: {angle:F2}°     ");
     }
 
+/*
+    public void UpdateJointAngles()
+    {
+        var currentGameObject = firstJoint.transform;
+        Transform lastGameObject = null;
+        _title2.text = ""; // Limpiar el texto previo
+        int jointIndex = 1; // Contador de joints
 
+        while (currentGameObject != null)
+        {
+            Transform nextGameObject = (currentGameObject.childCount > 0) ? currentGameObject.GetChild(0) : null;
+
+            if (lastGameObject != null)
+            {
+                newAngle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
+
+                // Si es la primera iteración, solo guarda el ángulo y no calcula diferencia
+                if (!previousAngles.ContainsKey(currentGameObject))
+                {
+                    previousAngles[currentGameObject] = newAngle;
+                }
+                else
+                {
+                    // Obtener el ángulo previo
+                    float previousAngle = previousAngles[currentGameObject];
+
+                    // Calcular diferencia de angulos
+                    float angleDifference = newAngle - previousAngle;
+
+                    // Guardar nuevo ángulo en el diccionario de angulos
+                    previousAngles[currentGameObject] = newAngle;
+
+                    // Aplicar color solo si la diferencia es significativa, si no, restaurar a gris
+                    ApplyRotationToAssociatedDiscs(currentGameObject, angleDifference);
+                }
+                _title2.text += $"{jointIndex}: {newAngle:F2}°\n";
+            }
+            else
+            {
+                // First Joint
+                previousAngles[currentGameObject] = 0f;
+                _title2.text += $"{jointIndex}: First Joint°\n";
+            }
+
+            lastGameObject = currentGameObject;
+            currentGameObject = nextGameObject;
+            jointIndex++;
+
+            if (currentGameObject.childCount == 0) break;
+        }
+    }
+*/
 public void UpdateJointAngles()
 {
     var currentGameObject = firstJoint.transform;
     Transform lastGameObject = null;
-    _title2.text = ""; // Limpiar el texto previo
+    string resultText = ""; // Almacenar los textos antes de mostrarlos
+    List<Transform> joints = new List<Transform>();
 
+    // Recopilar todos los joints
     while (currentGameObject.childCount > 0)
     {
-        Transform nextGameObject = currentGameObject.GetChild(0);
+        joints.Add(currentGameObject); // Almacenar el joint
+        currentGameObject = currentGameObject.GetChild(0); // Avanzar al siguiente joint
+    }
 
-        if (lastGameObject != null)
+    // Calcular y mostrar los ángulos, excluyendo los últimos 2 joints y el del final
+    for (int i = 0; i < joints.Count - 3; i++)
+    {
+        currentGameObject = joints[i]; 
+        Transform nextGameObject = (i + 1 < joints.Count) ? joints[i + 1] : null;
+        
+        // Este if evita que se cuente al primer joint
+        if (lastGameObject != null && nextGameObject != null)
         {
-            newAngle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
-
-            // Si es la primera iteración, solo guarda el ángulo y no calcula diferencia
-            if (!previousAngles.ContainsKey(currentGameObject))
-            {
-                previousAngles[currentGameObject] = newAngle;
-            }
-            else
-            {
-                // Obtener el ángulo previo
-                float previousAngle = previousAngles[currentGameObject];
-
-                // Calcular diferencia de angulos
-                float angleDifference = newAngle - previousAngle;
-
-                // Guardar nuevo ángulo en el diccionario de angulos
-                previousAngles[currentGameObject] = newAngle;
-
-                // Mostrar el ángulo absoluto en el texto
-                _title2.text += $"Angle: {newAngle:F2}°\n";
-
-                // Aplicar color solo si la diferencia es significativa, si no, restaurar a gris
-                ApplyRotationToAssociatedDiscs(currentGameObject, angleDifference);
-            }
-        }
-        else
-        {
-            // Primera iteración: solo guardar el ángulo
-            previousAngles[currentGameObject] = 0f;
+            float angle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
+            resultText += $"{i + 1}: {angle:F2}°\n";
         }
 
         lastGameObject = currentGameObject;
-        currentGameObject = nextGameObject;
     }
+
+    _title2.text = resultText; // Mostrar los resultados al final
 }
+
+
 
 // Función para calcular el ángulo y retornar el valor
 private float VisualizeAngleDinamic(Transform firstJoint, Transform currentJoint, Transform lastJoint)

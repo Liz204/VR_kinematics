@@ -3,35 +3,23 @@ using TMPro;
 
 public class UpdateAngleText : MonoBehaviour
 {
-    private TextMeshProUGUI title;  // Referencia automática al TextMeshPro
+    private TextMeshProUGUI title2;  // Referencia automática al TextMeshPro
     private Transform cameraTransform; // Referencia automática a la cámara principal
     private MechanicalArmBuilder armBuilder;
 
-    private float angle;
-
     void Start()
     {
-        title = GetComponent<TextMeshProUGUI>();
+        title2 = GetComponent<TextMeshProUGUI>();
         armBuilder = FindObjectOfType<MechanicalArmBuilder>();
 
         cameraTransform = Camera.main?.transform;
-
-        if (cameraTransform == null)
-        {
-            Debug.LogWarning("No se encontró una cámara principal en la escena.");
-        }
-        if (armBuilder == null)
-        {
-            Debug.LogWarning("No se encontró el script MechanicalArmBuilder en la escena.");
-        }
     }
 
     void Update()
     {
         if (armBuilder != null)
         {
-            float newAngle = armBuilder.newAngle; // Accede a la variable desde el otro script
-            title.text = $"{newAngle:F2}°"; // Muestra solo el valor numérico
+            title2.text = $"{armBuilder.newAngle:F2}°";
         }
 
         if (cameraTransform != null)
