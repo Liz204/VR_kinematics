@@ -5,7 +5,7 @@ public class ImageToVR : MonoBehaviour
 {
     public Image[] images;
 
-    public Vector2 targetSize = new Vector2(300, 300); // Size of the images
+    public Vector2 targetSize = new Vector2(200, 200); // Size of the images
     
     // -1 = none 
     private int currentIndex = -1;
