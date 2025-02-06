@@ -457,65 +457,79 @@ public class MechanicalArmBuilder : MonoBehaviour
         //_title.text = ( $"Angle 2: {angle:F2}°     ");
     }
 
-
-public void UpdateJointAngles()
-{
-    var currentGameObject = firstJoint.transform;
-    Transform lastGameObject = null;
-    List<float> angles = new List<float>();
-    string resultText = ""; // Almacenar los textos antes de mostrarlos
-    List<Transform> joints = new List<Transform>();
-
-    // Recopilar todos los joints
-    while (currentGameObject.childCount > 0)
+    public void UpdateJointAngles()
     {
-        joints.Add(currentGameObject); // Almacenar el joint
-        currentGameObject = currentGameObject.GetChild(0); // Avanzar al siguiente joint
+        List<Transform> joints = CollectJoints();
+        List<float> angles = CalculateAndDisplayAngles(joints);
+        UpdateRotationSpheres(joints, angles);
     }
 
-    // Calcular y mostrar los ángulos, excluyendo los últimos 2 joints y el del final
-    for (int i = 0; i < joints.Count; i++)
+    // Función para recopilar todos los joints
+    private List<Transform> CollectJoints()
     {
-        currentGameObject = joints[i]; 
+        var currentGameObject = firstJoint.transform;
+        List<Transform> joints = new List<Transform>();
 
-        Transform nextGameObject = (i + 1 < joints.Count-2) ? joints[i + 1] : null;
-        
-        // Este if evita que se cuente al primer joint
-        if (lastGameObject != null && nextGameObject != null)
+        while (currentGameObject.childCount > 0)
         {
-            // Obtenemos el angulo
-            float angle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
-            angles.Add(angle);
-            resultText += $"{i}: {angle:F0}°\n";
+            joints.Add(currentGameObject); // Almacenar el joint
+            currentGameObject = currentGameObject.GetChild(0); // Avanzar al siguiente joint
         }
 
-        lastGameObject = currentGameObject;
+        return joints;
     }
 
-    _title2.text = resultText; // Mostrar los resultados al final
-
-    int angleindex = 0;
-    for (int i = 1; i < joints.Count-2; i++)
+    // Función para calcular ángulos y mostrar en pantalla
+    private List<float> CalculateAndDisplayAngles(List<Transform> joints)
     {
-        ApplyRotationToAssociatedDiscs(joints[i], angles[angleindex]); // Coloreamos el disco del eje que rote
-        Transform rotationSphere = joints[i].Find("RotationSphere(Clone)");
-        if (rotationSphere != null)
+        Transform lastGameObject = null;
+        List<float> angles = new List<float>();
+        string resultText = "";
+
+        for (int i = 0; i < joints.Count; i++)
         {
-            Transform canva = rotationSphere.Find("Canvas");
-            if (canva != null)
+            Transform currentGameObject = joints[i];
+            Transform nextGameObject = (i + 1 < joints.Count - 2) ? joints[i + 1] : null;
+
+            if (lastGameObject != null && nextGameObject != null)
             {
-                TextMeshProUGUI textComponent = canva.GetComponentInChildren<TextMeshProUGUI>();
-                if (textComponent != null)
+                float angle = VisualizeAngleDinamic(lastGameObject, currentGameObject, nextGameObject);
+                angles.Add(angle);
+                resultText += $"{i}: {angle:F0}°\n";
+            }
+
+            lastGameObject = currentGameObject;
+        }
+
+        _title2.text = resultText;
+        return angles;
+    }
+
+    // Función para actualizar las RotationSpheres con los ángulos calculados
+    private void UpdateRotationSpheres(List<Transform> joints, List<float> angles)
+    {
+        int angleIndex = 0;
+
+        for (int i = 1; i < joints.Count - 2; i++)
+        {
+            ApplyRotationToAssociatedDiscs(joints[i], angles[angleIndex]);
+
+            Transform rotationSphere = joints[i].Find("RotationSphere(Clone)");
+            if (rotationSphere != null)
+            {
+                Transform canvas = rotationSphere.Find("Canvas");
+                if (canvas != null)
                 {
-                    // Obtener el ángulo calculado entre los joints
-                    float angle = VisualizeAngleDinamic(lastGameObject, currentGameObject, rotationSphere);
-                    textComponent.text = $"{angles[angleindex]:f0}°"; // Mostrar el ángulo en el TextMeshProUGUI del joint
-                    angleindex++;
+                    TextMeshProUGUI textComponent = canvas.GetComponentInChildren<TextMeshProUGUI>();
+                    if (textComponent != null)
+                    {
+                        textComponent.text = $"{angles[angleIndex]:F0}°";
+                        angleIndex++;
+                    }
                 }
             }
         }
     }
-}
 
 // Función para calcular el ángulo y retornar el valor
 private float VisualizeAngleDinamic(Transform firstJoint, Transform currentJoint, Transform lastJoint)
