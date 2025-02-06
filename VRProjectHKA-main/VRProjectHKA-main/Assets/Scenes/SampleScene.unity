@@ -15907,6 +15907,7 @@ MonoBehaviour:
   armSegments: []
   _title: {fileID: 2038387669}
   _title2: {fileID: 877310098}
+  newAngle: 0
 --- !u!4 &1408644101
 Transform:
   m_ObjectHideFlags: 0
@@ -18449,7 +18450,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2fd4d4af9001c5248b95da150cb8188d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cfa6121eb559db34b9989a4263abe377, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -24243,7 +24244,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: cfa6121eb559db34b9989a4263abe377, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2fd4d4af9001c5248b95da150cb8188d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
