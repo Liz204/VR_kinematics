@@ -172,7 +172,7 @@ public class MechanicalArmBuilder : MonoBehaviour
             if(!isDragging && OVRInput.GetDown(OVRInput.Button.One)){
                 EndArmCreationMode();
             }
-        }
+        }// End Creation Mode
         else {
             RemoveDiscsFromJoint(lastJoint.transform);
             HandleLastJointHoverAndDrag();
@@ -417,16 +417,16 @@ public class MechanicalArmBuilder : MonoBehaviour
       private void VisualizeAngleBetweenLastTwoJoints(Vector3 direction1,Vector3 directiontwo)
     {
         // Asegúrate de que el currentJoint tiene asignado su JointProperties
-    JointProperties currentProperties = currentJoint.GetComponent<JointProperties>();
+        JointProperties currentProperties = currentJoint.GetComponent<JointProperties>();
 
         GameObject joint1 = firstJoint;
         GameObject joint2 = currentJoint;
         GameObject joint3 = lastJoint;
- if (joint1== null || joint3 == null)
-    {
-        Debug.LogWarning("No hay suficientes joints conectados para calcular el ángulo.");
-        return;
-    }
+        if (joint1== null || joint3 == null)
+        {
+            Debug.LogWarning("No hay suficientes joints conectados para calcular el ángulo.");
+            return;
+        }
 
         //Vector3 direction1 = joint2.transform.position - joint1.transform.position;
 
@@ -497,6 +497,7 @@ public void UpdateJointAngles()
     int angleindex = 0;
     for (int i = 1; i < joints.Count-2; i++)
     {
+        ApplyRotationToAssociatedDiscs(joints[i], angles[angleindex]); // Coloreamos el disco del eje que rote
         Transform rotationSphere = joints[i].Find("RotationSphere(Clone)");
         if (rotationSphere != null)
         {
@@ -515,8 +516,6 @@ public void UpdateJointAngles()
         }
     }
 }
-
-
 
 // Función para calcular el ángulo y retornar el valor
 private float VisualizeAngleDinamic(Transform firstJoint, Transform currentJoint, Transform lastJoint)
@@ -599,6 +598,7 @@ private void ApplyRotationFromAngle(RotationDisc disc, float angle)
     }
 }
 
+// Remove the disk from the last joint
 private void RemoveDiscsFromJoint(Transform joint)
 {
     // Obtener todos los RotationDisc dentro de la joint
