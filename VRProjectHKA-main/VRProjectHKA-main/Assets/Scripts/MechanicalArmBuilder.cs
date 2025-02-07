@@ -462,6 +462,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         List<Transform> joints = CollectJoints();
         List<float> angles = CalculateAndDisplayAngles(joints);
         UpdateRotationSpheres(joints, angles);
+        HighlightRotationSphereOnHover(joints);
     }
 
     // Función para recopilar todos los joints
@@ -512,6 +513,8 @@ public class MechanicalArmBuilder : MonoBehaviour
 
         for (int i = 1; i < joints.Count - 2; i++)
         {
+            if (angleIndex >= angles.Count) break;
+            
             ApplyRotationToAssociatedDiscs(joints[i], angles[angleIndex]);
 
             Transform rotationSphere = joints[i].Find("RotationSphere(Clone)");
@@ -525,6 +528,37 @@ public class MechanicalArmBuilder : MonoBehaviour
                     {
                         textComponent.text = $"{angles[angleIndex]:F0}°";
                         angleIndex++;
+                    }
+                }
+            }
+        }
+    }
+    // Nueva función para cambiar el color del disco cuando el rayo lo apunta
+    private void HighlightRotationSphereOnHover(List<Transform> joints)
+    {
+        if (rayInteractor == null) return;
+
+        Ray ray = rayInteractor.Ray;
+
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            foreach (Transform joint in joints)
+            {
+                Transform rotationSphere = joint.Find("RotationSphere(Clone)");
+                if (rotationSphere != null)
+                {
+                    Renderer sphereRenderer = rotationSphere.GetComponent<Renderer>();
+
+                    if (sphereRenderer != null)
+                    {
+                        if (hit.collider.gameObject == rotationSphere.gameObject)
+                        {
+                            sphereRenderer.material.color = Color.red; // Color cuando está siendo apuntado
+                        }
+                        else
+                        {
+                            sphereRenderer.material.color = Color.white; // Color normal
+                        }
                     }
                 }
             }
