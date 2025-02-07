@@ -514,8 +514,6 @@ public class MechanicalArmBuilder : MonoBehaviour
         for (int i = 1; i < joints.Count - 2; i++)
         {
             if (angleIndex >= angles.Count) break;
-            
-            ApplyRotationToAssociatedDiscs(joints[i], angles[angleIndex]);
 
             Transform rotationSphere = joints[i].Find("RotationSphere(Clone)");
             if (rotationSphere != null)
@@ -533,37 +531,87 @@ public class MechanicalArmBuilder : MonoBehaviour
             }
         }
     }
-    // Nueva función para cambiar el color del disco cuando el rayo lo apunta
-    private void HighlightRotationSphereOnHover(List<Transform> joints)
+
+// Cambiar el color del disco cuando el rayo lo apunta
+private void HighlightRotationSphereOnHover(List<Transform> joints)
+{
+    if (rayInteractor == null) return;
+
+    Ray ray = rayInteractor.Ray;
+
+    if (Physics.Raycast(ray, out RaycastHit hit))
     {
-        if (rayInteractor == null) return;
-
-        Ray ray = rayInteractor.Ray;
-
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        foreach (Transform joint in joints)
         {
-            foreach (Transform joint in joints)
+            Transform rotationSphere = joint.Find("RotationSphere(Clone)");
+            if (rotationSphere != null)
             {
-                Transform rotationSphere = joint.Find("RotationSphere(Clone)");
-                if (rotationSphere != null)
-                {
-                    Renderer sphereRenderer = rotationSphere.GetComponent<Renderer>();
+                // Buscar los discos dentro de la RotationSphere
+                Transform diskX = rotationSphere.Find("Disk X");
+                Transform diskY = rotationSphere.Find("Disk Y");
+                Transform diskZ = rotationSphere.Find("Disk Z");
 
-                    if (sphereRenderer != null)
+                // Verificar si el rayo tocó algún disco
+                if (diskX != null && hit.collider.gameObject == diskX.gameObject)
+                {
+                    // Cambiar el color del disco X cuando es tocado
+                    Renderer diskXRenderer = diskX.GetComponent<Renderer>();
+                    if (diskXRenderer != null)
                     {
-                        if (hit.collider.gameObject == rotationSphere.gameObject)
+                        diskXRenderer.material.color = Color.red; // Cambiar color a rojo
+                    }
+                }
+                else if (diskY != null && hit.collider.gameObject == diskY.gameObject)
+                {
+                    // Cambiar el color del disco Y cuando es tocado
+                    Renderer diskYRenderer = diskY.GetComponent<Renderer>();
+                    if (diskYRenderer != null)
+                    {
+                        diskYRenderer.material.color = Color.green; // Cambiar color a verde
+                    }
+                }
+                else if (diskZ != null && hit.collider.gameObject == diskZ.gameObject)
+                {
+                    // Cambiar el color del disco Z cuando es tocado
+                    Renderer diskZRenderer = diskZ.GetComponent<Renderer>();
+                    if (diskZRenderer != null)
+                    {
+                        diskZRenderer.material.color = Color.blue; // Cambiar color a azul
+                    }
+                }
+                else
+                {
+                    // Restaurar el color original si no se está tocando
+                    if (diskX != null)
+                    {
+                        Renderer diskXRenderer = diskX.GetComponent<Renderer>();
+                        if (diskXRenderer != null)
                         {
-                            sphereRenderer.material.color = Color.red; // Color cuando está siendo apuntado
+                            diskXRenderer.material.color = Color.gray; // Color original
                         }
-                        else
+                    }
+                    if (diskY != null)
+                    {
+                        Renderer diskYRenderer = diskY.GetComponent<Renderer>();
+                        if (diskYRenderer != null)
                         {
-                            sphereRenderer.material.color = Color.white; // Color normal
+                            diskYRenderer.material.color = Color.gray; // Color original
+                        }
+                    }
+                    if (diskZ != null)
+                    {
+                        Renderer diskZRenderer = diskZ.GetComponent<Renderer>();
+                        if (diskZRenderer != null)
+                        {
+                            diskZRenderer.material.color = Color.gray; // Color original
                         }
                     }
                 }
             }
         }
     }
+}
+
 
 // Función para calcular el ángulo y retornar el valor
 private float VisualizeAngleDinamic(Transform firstJoint, Transform currentJoint, Transform lastJoint)
