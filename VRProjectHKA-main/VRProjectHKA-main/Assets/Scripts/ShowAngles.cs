@@ -3,8 +3,8 @@ using TMPro;
 
 public class UpdateAngleText : MonoBehaviour
 {
-    private TextMeshProUGUI title2;  // Referencia automática al TextMeshPro
-    private Transform cameraTransform; // Referencia automática a la cámara principal
+    private TextMeshProUGUI title2;  // Automatic reference to the TextMeshPro
+    private Transform cameraTransform; // Automatic reference to the main camera
 
     void Start()
     {
@@ -17,7 +17,7 @@ public class UpdateAngleText : MonoBehaviour
         if (cameraTransform != null)
         {
             transform.LookAt(cameraTransform);
-            transform.Rotate(0, 180, 0); // Evita que el texto se vea al revés
+            transform.Rotate(0, 180, 0); // Prevents the text from appearing reversed
         }
     }
 }

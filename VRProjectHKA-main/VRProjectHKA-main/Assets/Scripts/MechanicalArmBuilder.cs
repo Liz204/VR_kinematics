@@ -59,7 +59,7 @@ public class MechanicalArmBuilder : MonoBehaviour
     {   
         if (rayInteractor == null)
         {
-            //Debug.LogError("No se ha asignado un RayInteractor al script.");
+            // Debug.LogError("No RayInteractor has been assigned to the script.");
         }
 
         bioIK = GetComponent<BioIK.BioIK>();
@@ -277,7 +277,7 @@ public class MechanicalArmBuilder : MonoBehaviour
 
     private Ray GetPointerRay()
     {
-        // Crear un rayo basado en la posición y dirección del controlador
+        // Create a ray based on the controller's position and direction
         return new Ray(Camera.main.transform.position, Camera.main.transform.forward);
 
     }
@@ -413,7 +413,7 @@ public class MechanicalArmBuilder : MonoBehaviour
 
       private void VisualizeAngleBetweenLastTwoJoints(Vector3 direction1,Vector3 directiontwo)
     {
-        // Asegúrate de que el currentJoint tiene asignado su JointProperties
+        // Make sure that currentJoint has its JointProperties assigned
         JointProperties currentProperties = currentJoint.GetComponent<JointProperties>();
 
         GameObject joint1 = firstJoint;
@@ -421,7 +421,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         GameObject joint3 = lastJoint;
         if (joint1== null || joint3 == null)
         {
-            Debug.LogWarning("No hay suficientes joints conectados para calcular el ángulo.");
+            Debug.LogWarning("There are not enough connected joints to calculate the angle.");
             return;
         }
 
@@ -462,7 +462,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         HighlightRotationSphereOnHover(joints);
     }
 
-    // Función para recopilar todos los joints
+    // Function to collect all the joints
     private List<Transform> CollectJoints()
     {
         var currentGameObject = firstJoint.transform;
@@ -470,14 +470,14 @@ public class MechanicalArmBuilder : MonoBehaviour
 
         while (currentGameObject.childCount > 0)
         {
-            joints.Add(currentGameObject); // Almacenar el joint
-            currentGameObject = currentGameObject.GetChild(0); // Avanzar al siguiente joint
+            joints.Add(currentGameObject); // Store the joint
+            currentGameObject = currentGameObject.GetChild(0); // next joint
         }
 
         return joints;
     }
 
-    // Función para calcular ángulos y mostrar en pantalla
+    // Function to calculate angles and display on screen
     private List<float> CalculateAndDisplayAngles(List<Transform> joints)
     {
         Transform lastGameObject = null;
@@ -503,7 +503,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         return angles;
     }
 
-    // Función para actualizar las RotationSpheres con los ángulos calculados
+    // Function to update the RotationSpheres with the calculated angles
     private void UpdateRotationSpheres(List<Transform> joints, List<float> angles)
     {
         int angleIndex = 0;
@@ -529,7 +529,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         }
     }
 
-    // Cambia el color de los discos
+    // Change the color of the discs
     private void HighlightRotationSphereOnHover(List<Transform> joints)
     {
         if (rayInteractor == null) return;
@@ -543,45 +543,47 @@ public class MechanicalArmBuilder : MonoBehaviour
                 Transform rotationSphere = joint.Find("RotationSphere(Clone)");
                 if (rotationSphere != null)
                 {
-                    // Buscar los discos dentro de la RotationSphere
+
+                    // Search for the discs inside the RotationSphere
                     Transform diskX = rotationSphere.Find("Disk X");
                     Transform diskY = rotationSphere.Find("Disk Y");
                     Transform diskZ = rotationSphere.Find("Disk Z");
 
-                    // Verificar si el rayo tocó algún disco
+                    // Check if the ray hit any disc
                     if (diskX != null && hit.collider.gameObject == diskX.gameObject)
                     {
-                        // Cambiar el color del disco X cuando es tocado
+                        // Change the color of the X disc when it is touched
                         Renderer diskXRenderer = diskX.GetComponent<Renderer>();
                         if (diskXRenderer != null)
                         {
-                            diskXRenderer.material.color = Color.red; // Cambiar color a rojo
+                            diskXRenderer.material.color = Color.red; // Change color to red
                         }
                     }
                     else
                     {
-                        // Restaurar el color original si no se está tocando
+                        // Return to original color
                         if (diskX != null)
                         {
                             Renderer diskXRenderer = diskX.GetComponent<Renderer>();
                             if (diskXRenderer != null)
                             {
-                                diskXRenderer.material.color = Color.gray; // Color original
+                                diskXRenderer.material.color = Color.gray; // Original color
                             }
                         }
                     }
 
                     if (diskY != null && hit.collider.gameObject == diskY.gameObject)
                     {
-                        // Cambiar el color del disco Y cuando es tocado
+                        // Change the color of the Y disc when it is touched
                         Renderer diskYRenderer = diskY.GetComponent<Renderer>();
                         if (diskYRenderer != null)
                         {
-                            diskYRenderer.material.color = Color.green; // Cambiar color a verde
+                            diskYRenderer.material.color = Color.green; // Change color to green
                         }
                     }
                     else
                     {
+                        // Return to original color
                         if (diskY != null)
                         {
                             Renderer diskYRenderer = diskY.GetComponent<Renderer>();
@@ -594,15 +596,16 @@ public class MechanicalArmBuilder : MonoBehaviour
 
                     if (diskZ != null && hit.collider.gameObject == diskZ.gameObject)
                     {
-                        // Cambiar el color del disco Z cuando es tocado
+                        // Change the color of the Z disc when it is touched
                         Renderer diskZRenderer = diskZ.GetComponent<Renderer>();
                         if (diskZRenderer != null)
                         {
-                            diskZRenderer.material.color = Color.blue; // Cambiar color a azul
+                            diskZRenderer.material.color = Color.blue; // Change color to blue
                         }
                     }
                     else
                     {
+                        // Return to original color
                         if (diskZ != null)
                         {
                             Renderer diskZRenderer = diskZ.GetComponent<Renderer>();
@@ -617,7 +620,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         }
     }
 
-    // Función para calcular el ángulo y retornar el valor
+    // Function to calculate the angle and return the value
     private float VisualizeAngleDinamic(Transform firstJoint, Transform currentJoint, Transform lastJoint)
     {
         if (firstJoint == null || lastJoint == null) return 0f;
@@ -629,7 +632,7 @@ public class MechanicalArmBuilder : MonoBehaviour
         return angle;
     }
 
-    // Función para iluminar el disco si hay cambio, o restaurarlo a gris si no
+    // Function to highlight the disc if there is a change, or restore it to gray if not
     private void ApplyRotationToAssociatedDiscs(Transform joint, float angleDifference)
     {
         RotationDisc[] discs = joint.GetComponentsInChildren<RotationDisc>();
@@ -639,14 +642,14 @@ public class MechanicalArmBuilder : MonoBehaviour
             Renderer discRenderer = disc.GetComponent<Renderer>();
             if (discRenderer == null) continue;
 
-            // Si la diferencia es menor a 0.1°, restaurar a gris
+            // If the difference is less than 0.1°, restore to gray
             if (Mathf.Abs(angleDifference) < 0.1f)
             {
                 discRenderer.material.color = Color.gray;
             }
             else
             {
-                // Aplicar color según el eje
+                // Apply color based on the axis
                 ApplyColorBasedOnAxis(disc,angleDifference);
             }
         }
@@ -671,19 +674,19 @@ public class MechanicalArmBuilder : MonoBehaviour
                     discRenderer.material.color = Color.blue;
                     break;
                 default:
-                    Debug.LogWarning("Eje de rotación desconocido: " + disc.axisToRotate);
+                    Debug.LogWarning("Unknown rotation axis: " + disc.axisToRotate);
                     break;
             }
         }
     }
-    // Función para aplicar rotación basada en el ángulo
+    // Function to apply rotation based on the angle
     private void ApplyRotationFromAngle(RotationDisc disc, float angle)
     {
-        if (disc.cube == null) return; // Asegúrate de que hay un cubo asociado
+        if (disc.cube == null) return; // Make sure there is a cube associated
 
-        float rotationAmount = angle * disc.rotationSpeed * Time.deltaTime; // Calcula cuánto rotar
+        float rotationAmount = angle * disc.rotationSpeed * Time.deltaTime; // Calculates how much to rotate
 
-        // Aplica la rotación según el eje seleccionado en el disco
+        // Apply rotation based on the selected axis on the disc
         if (disc.axisToRotate == RotationDisc.Axis.X)
         {
             disc.cube.transform.Rotate(Vector3.right, -rotationAmount);
@@ -701,10 +704,10 @@ public class MechanicalArmBuilder : MonoBehaviour
     // Remove the disk from the last joint
     private void RemoveDiscsFromJoint(Transform joint)
     {
-        // Obtener todos los RotationDisc dentro de la joint
+        // Get all the RotationDisc inside the joint
         RotationDisc[] discs = joint.GetComponentsInChildren<RotationDisc>();
 
-        // Eliminar cada disco encontrado
+        // Remove each disc found
         foreach (var disc in discs)
         {
             Destroy(disc.gameObject);

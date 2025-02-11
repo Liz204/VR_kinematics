@@ -2,25 +2,25 @@ using UnityEngine;
 
 public class RotationDisc : MonoBehaviour
 {
-    public enum Axis { X, Y, Z } // Enumeración para los tres ejes
+    public enum Axis { X, Y, Z } // Enumeration for the three axes
 
-    public Axis axisToRotate; // Eje en el que el disco controlará la rotación
-    public GameObject cube; // Referencia al cubo que girará
-    private bool isDragging = false; // Estado de arrastre
-    public float rotationSpeed = 1000f; // Velocidad de rotación
+    public Axis axisToRotate; // Axis in which the disc will control the rotation
+    public GameObject cube; // Reference to the cube that will rotate
+    private bool isDragging = false; // Drag state
+    public float rotationSpeed = 1000f; // Rotation speed
 
     private void Update()
     {
-        // Lógica principal de interacción con VR
-        if (IsSelectButtonDown()) // Detecta si se ha presionado el botón del controlador
+        // Main interaction logic with VR
+        if (IsSelectButtonDown()) // Detects if the controller button has been pressed
         {
-            Ray pointerRay = GetPointerRay(); // Obtén el rayo del controlador
+            Ray pointerRay = GetPointerRay(); // Get the controller ray
             RaycastHit hit;
 
-            // Comprueba si el rayo golpea este disco
+            // Check if the ray hits this disc
             if (Physics.Raycast(pointerRay, out hit))
             {
-                if (hit.collider.gameObject == gameObject) // Verifica si el objeto tocado es este disco
+                if (hit.collider.gameObject == gameObject) // Verify if the touched object is this disc
                 {
                     isDragging = true;
                 }
@@ -29,25 +29,25 @@ public class RotationDisc : MonoBehaviour
 
         if (isDragging && cube != null)
         {
-            // Detecta el movimiento del controlador
+            // Detects the movement of the controller
             float rotationAmount = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).x * rotationSpeed * Time.deltaTime;
 
-            // Aplica la rotación en el eje seleccionado
+            // Apply rotation on the selected axis
             if (axisToRotate == Axis.X)
             {
-                cube.transform.Rotate(Vector3.right, -rotationAmount); // Dirección opuesta en X
+                cube.transform.Rotate(Vector3.right, -rotationAmount); // Opposite direction on X
             }
             else if (axisToRotate == Axis.Y)
             {
-                cube.transform.Rotate(Vector3.up, -rotationAmount); // Dirección opuesta en Y
+                cube.transform.Rotate(Vector3.up, -rotationAmount); // Opposite direction on Y
             }
             else if (axisToRotate == Axis.Z)
             {
-                cube.transform.Rotate(Vector3.forward, rotationAmount); // Sin cambio en Z
+                cube.transform.Rotate(Vector3.forward, rotationAmount); // No change in Z
             }
         }
 
-        // Si el botón de selección ya no está presionado, deja de arrastrar
+        // If the select button is no longer pressed, stop dragging
         if (OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
         {
             isDragging = false;
@@ -56,13 +56,13 @@ public class RotationDisc : MonoBehaviour
 
     private Ray GetPointerRay()
     {
-        // Crear un rayo basado en la posición y dirección del controlador
+        // Create a ray based on the controller's position and direction
         return new Ray(Camera.main.transform.position, Camera.main.transform.forward);
     }
 
     private bool IsSelectButtonDown()
     {
-        // Verifica si el botón de selección está presionado
+        // Check if the select button is pressed
         return OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger);
     }
 }

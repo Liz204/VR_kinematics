@@ -2,34 +2,34 @@ using UnityEngine;
 
 public class RotSphere : MonoBehaviour
 {
-    public GameObject rotationSpherePrefab; // Prefab de la esfera con los discos
-    private GameObject spawnedSphere; // Instancia de la esfera generada
+    public GameObject rotationSpherePrefab; // Prefab of the sphere with the discs
+    private GameObject spawnedSphere; // Instance of the generated sphere
 
     void Update()
     {
         if (OVRInput.GetDown(OVRInput.Button.One))
         {
-            // Si no existe la esfera generada, crearla
+            // If the generated sphere does not exist, create it
             if (spawnedSphere == null)
             {
-                // Crear la esfera con los discos sobre el cubo
+                // Create the sphere with the discs over the cube
                 spawnedSphere = Instantiate(rotationSpherePrefab, transform.position, Quaternion.identity);
 
-                // Establecer el cubo como padre de la esfera generada
+                // Set the cube as the parent of the generated sphere
                 spawnedSphere.transform.SetParent(transform);
 
-                // Asignar el cubo a cada disco dentro de la esfera, excepto el último
+                // Assign the cube to each disc inside the sphere, except the last one
                 int childCount = spawnedSphere.transform.childCount;
                 int index = 0;
 
                 foreach (Transform child in spawnedSphere.transform)
                 {
-                    if (index < childCount - 1) // Evita el último hijo
+                    if (index < childCount - 1) // Avoid the last child
                     {
                         RotationDisc discScript = child.GetComponent<RotationDisc>();
                         if (discScript != null)
                         {
-                            discScript.cube = gameObject; // Asignamos el cubo automáticamente
+                            discScript.cube = gameObject; // Automatically assign the cube
                         }
                     }
                     index++;
@@ -38,35 +38,33 @@ public class RotSphere : MonoBehaviour
         }
     }
 
-
     void OnMouseDown()
     {
         if (spawnedSphere == null)
         {
-            // Crear la esfera con los discos sobre el cubo
+            // Create the sphere with the discs over the cube
             spawnedSphere = Instantiate(rotationSpherePrefab, transform.position, Quaternion.identity);
 
-            // Establecer el cubo como padre de la esfera generada
+            // Set the cube as the parent of the generated sphere
             spawnedSphere.transform.SetParent(transform);
 
-            //Debug.Log("RotationSphere generada sobre el cubo.");
+            // Debug.Log("RotationSphere generated over the cube.");
 
-            // Asignar el cubo a cada disco dentro de la esfera
+            // Assign the cube to each disc inside the sphere
             foreach (Transform child in spawnedSphere.transform)
             {
                 RotationDisc discScript = child.GetComponent<RotationDisc>();
                 if (discScript != null)
                 {
-                    discScript.cube = gameObject; // Asignamos el cubo automáticamente (el cubo es 'gameObject')
+                    discScript.cube = gameObject; // Automatically assign the cube (the cube is 'gameObject')
                 }
             }
         }
         else
         {
-            // Si ya existe la esfera, destruirla
+            // If the sphere already exists, destroy it
             Destroy(spawnedSphere);
-            //Debug.Log("RotationSphere destruida.");
+            // Debug.Log("RotationSphere destroyed.");
         }
     }
 }
-

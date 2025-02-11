@@ -12,7 +12,7 @@ public class ImageToVR : MonoBehaviour
 
     void Start()
     {
-        // Configura el tamaño y oculta todas las imágenes
+        // Sets the size and hides all images
         if (images != null && images.Length > 0)
         {
             foreach (Image img in images)
@@ -26,39 +26,39 @@ public class ImageToVR : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("No se han asignado imágenes en el arreglo.");
+            Debug.LogWarning("No images have been assigned in the array.");
         }
     }
 
  void Update()
     {
-        // Al presionar el botón B del controlador derecho (OVRInput.Button.Two)
+        // When pressing the B button on the right controller (OVRInput.Button.Two)
         if (OVRInput.GetDown(OVRInput.Button.Two))
         {
-            // Si hay alguna imagen visible, la ocultamos
+            // If there is any visible image, hide it
             if (currentIndex != -1)
             {
                 images[currentIndex].enabled = false;
             }
 
-            // Incrementamos el índice de forma cíclica
+            // Increment the index cyclically
             currentIndex++;
 
-            // Si llegamos al final del arreglo, reiniciamos el índice a -1
+            // If we reach the end of the array, reset the index to -1
             if (currentIndex >= images.Length)
             {
                 currentIndex = -1;
             }
 
-            // Si no estamos en el estado -1, mostramos la imagen en el índice actual
+            // If we are not in state -1, show the image at the current index
             if (currentIndex != -1)
             {
                 images[currentIndex].enabled = true;
-                Debug.Log("Mostrando imagen " + (currentIndex + 1));
+                Debug.Log("Displaying image " + (currentIndex + 1));
             }
             else
             {
-                Debug.Log("Ninguna imagen visible.");
+                Debug.Log("No visible image.");
             }
         }
     }

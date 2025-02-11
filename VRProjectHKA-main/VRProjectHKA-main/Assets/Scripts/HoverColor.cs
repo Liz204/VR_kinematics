@@ -2,23 +2,23 @@ using UnityEngine;
 
 public class HoverColor : MonoBehaviour
 {
-    private Renderer cubeRenderer; // Referencia al Renderer del cubo
-    private Color originalColor; // Color original del cubo
-    public Color hoverColor = Color.yellow; // Color del cubo al pasar el mouse
+    private Renderer cubeRenderer; // Reference to the cube's Renderer
+    private Color originalColor; // Original color of the cube
+    public Color hoverColor = Color.yellow; // Cube color when the mouse hovers over it
 
     void Start()
     {
-        // Obtener el Renderer del cubo para cambiar el color
+        // Get the cube's Renderer to change the color
         cubeRenderer = GetComponent<Renderer>();
         if (cubeRenderer != null)
         {
-            originalColor = cubeRenderer.material.color; // Guardar el color original
+            originalColor = cubeRenderer.material.color; // Save the original color
         }
     }
 
     void OnMouseEnter()
     {
-        // Cambiar el color del cubo al pasar el mouse
+        // Change the cube's color when the mouse hovers over it
         if (cubeRenderer != null)
         {
             cubeRenderer.material.color = hoverColor;
@@ -27,7 +27,7 @@ public class HoverColor : MonoBehaviour
 
     void OnMouseExit()
     {
-        // Restaurar el color original cuando el mouse sale del cubo
+        // Restore the original color when the mouse exits the cube
         if (cubeRenderer != null)
         {
             cubeRenderer.material.color = originalColor;
