@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Mainmenu.unity
+    guid: e7a18cb7d5112f245a46c1025c56c8ee
+  - enabled: 1
+    path: Assets/Scenes/SampleScene.unity
+    guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/PreMade.unity
+    guid: a24ddbb4cf91d224eb2a6a48a2ef6b09
+  - enabled: 1
+    path: Assets/Scenes/ScrewJointScene.unity
+    guid: 4478c6bfeb45f4affbbba2cf555a2f96
+  - enabled: 1
+    path: Assets/Scenes/PinJoint.unity
+    guid: a7a473e222bc641e28c3bc2796dd0d69
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 7b5198fa288ba7342854742f8e1dadcc, type: 2}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: b6968cade88d7064d820aabd463c4dfe, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 3b2c799ad32ac424dbacb8c722b6e7ee, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: dba097903943443568d1abeb92e55503, type: 2}
+    xr.sdk.mock-hmd.settings: {fileID: 11400000, guid: 294c684f724cc4d07a13d7ef9f2a351d, type: 2}
+  m_UseUCBPForAssetBundles: 0

@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 1222261562c2b4344aab74254d8cfdce
+timeCreated: 1502485934
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 67819
+  packageName: Bio IK
+  packageVersion: 2.0d
+  assetPath: Assets/BioIK/Setup/Objectives/Displacement.cs
+  uploadId: 199125
